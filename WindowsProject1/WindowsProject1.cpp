@@ -3,8 +3,11 @@
 
 #include "framework.h"
 #include "WindowsProject1.h"
-#include "vector"
+#include <vector>
+#include <memory>
+#include <random>
 #include "CObject.h"
+#include "CCircle.h"
 
 #define MAX_LOADSTRING 100
 
@@ -132,7 +135,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static SIZE caretSize;
     static int pos;
 
-    static std::vector<CObject> objects;
+    static std::vector<std::unique_ptr<CObject>> objects;
+    static std::random_device rd;
+    static std::default_random_engine g{ rd() };
+    static std::uniform_int_distribution disRadius{ 30, 60 };
+    static std::uniform_int_distribution disSpeed{ 0, 5 };
 
     switch (message)
     {
@@ -170,6 +177,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             //DrawStar(hdc, POINT{ 500, 500 }, 100);
             //DrawCross(hdc, POINT{ 500, 500 }, 100, pos);
 
+            DrawObjects(objects, hdc);
+
             EndPaint(hWnd, &ps);
         }
         break;
@@ -187,7 +196,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONDOWN:
         break;
     case WM_LBUTTONUP:
-
+    {
+        POINT center{ LOWORD(lParam), HIWORD(lParam) };
+        objects.emplace_back(std::make_unique<CCircle>(center, disSpeed(g), disRadius(g)));
+        InvalidateRgn(hWnd, NULL, TRUE);
+    }
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);

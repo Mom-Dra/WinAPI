@@ -3,6 +3,10 @@
 #include "resource.h"
 #include <cmath>
 #include <numbers>
+#include <vector>
+#include <memory>
+
+#include "CObject.h"
 
 void DrawCircle(const HDC& hdc, const POINT& center, const int& Radius)
 {
@@ -93,4 +97,10 @@ void DrawCross(const HDC& hdc, const POINT& center, int length, int pos)
 	}
 }
 
-
+void DrawObjects(const std::vector<std::unique_ptr<CObject>>& objects, const HDC& hdc)
+{
+	for (const auto& object : objects)
+	{
+		object->Draw(hdc);
+	}
+}
