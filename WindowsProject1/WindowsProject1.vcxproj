@@ -130,6 +130,8 @@
   <ItemGroup>
     <ClInclude Include="CCircle.h" />
     <ClInclude Include="CObject.h" />
+    <ClInclude Include="CRectangle.h" />
+    <ClInclude Include="CStar.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -139,6 +141,8 @@
   <ItemGroup>
     <ClCompile Include="CCircle.cpp" />
     <ClCompile Include="CObject.cpp" />
+    <ClCompile Include="CRectangle.cpp" />
+    <ClCompile Include="CStar.cpp" />
     <ClCompile Include="WindowsProject1.cpp" />
   </ItemGroup>
   <ItemGroup>

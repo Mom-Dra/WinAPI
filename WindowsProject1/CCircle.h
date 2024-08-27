@@ -4,12 +4,12 @@
 class CCircle : public CObject
 {
 private:
-	float radius;
+	int radius;
 
 public:
-	explicit CCircle(const POINT& center, const float& speed, const float& radius);
+	explicit CCircle(const Vector2& center, const int& speed, const int& radius, const Vector2& moveDir);
 
-	void Update() override;
+	void Update(const float& deltaTime) override;
 	void Draw(const HDC& hdc) const override;
 	bool Collision() override;
 };

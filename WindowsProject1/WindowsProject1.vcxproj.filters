@@ -36,6 +36,12 @@
     <ClInclude Include="Vector2.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CRectangle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CStar.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WindowsProject1.cpp">
@@ -45,6 +51,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CCircle.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CRectangle.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CStar.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

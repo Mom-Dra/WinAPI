@@ -1,12 +1,20 @@
 #pragma once
-
+#include "framework.h"
 #include "resource.h"
 #include <cmath>
 #include <numbers>
 #include <vector>
 #include <memory>
+#include <random>
+#include <algorithm>
 
 #include "CObject.h"
+#include "CCircle.h"
+#include "CRectangle.h"
+#include "CStar.h"
+
+constexpr int SPEED_MIN = 30;
+constexpr int SPEED_MAX = 100;
 
 void DrawCircle(const HDC& hdc, const POINT& center, const int& Radius)
 {
@@ -102,5 +110,49 @@ void DrawObjects(const std::vector<std::unique_ptr<CObject>>& objects, const HDC
 	for (const auto& object : objects)
 	{
 		object->Draw(hdc);
+	}
+}
+
+int GetRandomInt(int min, int max)
+{
+	if (min > max)
+	{
+		std::swap(min, max);
+	}
+
+	static std::random_device rd;
+	static std::default_random_engine g{ rd() };
+	std::uniform_int_distribution dis{ min, max };
+	
+	return dis(g);
+}
+
+void GenerateObject(std::vector<std::unique_ptr<CObject>>& objects, const LPARAM& lParam)
+{
+	Vector2 center{ LOWORD(lParam), HIWORD(lParam) };
+	Vector2 moveDir{ GetRandomInt(-10, 10), GetRandomInt(-10, 10) };
+
+	switch (GetRandomInt(0, 2))
+	{
+		// 원
+	case 0:
+		objects.emplace_back(std::make_unique<CCircle>(center, GetRandomInt(SPEED_MIN, SPEED_MAX), GetRandomInt(30, 60), moveDir));
+		break;
+		// 사각형
+	case 1:
+		objects.emplace_back(std::make_unique<CRectangle>(center, GetRandomInt(SPEED_MIN, SPEED_MAX), GetRandomInt(30, 60), moveDir));
+		break;
+		// 별
+	case 2:
+		objects.emplace_back(std::make_unique<CStar>(center, GetRandomInt(SPEED_MIN, SPEED_MAX), GetRandomInt(30, 60), GetRandomInt(5, 10), moveDir));
+		break;
+	}
+}
+
+void Update(const std::vector<std::unique_ptr<CObject>>& objects, const float& deltaTime)
+{
+	for (const auto& object : objects)
+	{
+		object->Update(deltaTime);
 	}
 }

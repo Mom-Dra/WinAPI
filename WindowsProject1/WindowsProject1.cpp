@@ -9,6 +9,9 @@
 #include "CObject.h"
 #include "CCircle.h"
 
+#define WM_TIMER_1 1
+constexpr double DELTATIME{ 0.01667 };
+
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -136,16 +139,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static int pos;
 
     static std::vector<std::unique_ptr<CObject>> objects;
-    static std::random_device rd;
-    static std::default_random_engine g{ rd() };
-    static std::uniform_int_distribution disRadius{ 30, 60 };
-    static std::uniform_int_distribution disSpeed{ 0, 5 };
-
+    
     switch (message)
     {
     case WM_CREATE:
         CreateCaret(hWnd, NULL, 5, 15);
         ShowCaret(hWnd);
+
+        SetTimer(hWnd, WM_TIMER_1, DELTATIME * 1000, NULL);
         break;
 
     case WM_COMMAND:
@@ -171,7 +172,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
 
-            POINT point{ 500, 500 };
+            //POINT point{ 500, 500 };
             //DrawSunflower(hdc, point, 50, 9);
             //Rectangle(hdc, 100, 100, 200, 200);
             //DrawStar(hdc, POINT{ 500, 500 }, 100);
@@ -196,11 +197,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONDOWN:
         break;
     case WM_LBUTTONUP:
-    {
-        POINT center{ LOWORD(lParam), HIWORD(lParam) };
-        objects.emplace_back(std::make_unique<CCircle>(center, disSpeed(g), disRadius(g)));
+        GenerateObject(objects, lParam);
         InvalidateRgn(hWnd, NULL, TRUE);
-    }
+    
+        break;
+    case WM_TIMER:
+        switch (wParam)
+        {
+        case WM_TIMER_1:
+            Update(objects, DELTATIME);
+            break;
+        }
+
+        InvalidateRgn(hWnd, NULL, TRUE);
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
