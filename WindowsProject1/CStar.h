@@ -16,5 +16,8 @@ public:
 	void Update(const float& deltaTime) override;
 	void Draw(const HDC& hdc) const override;
 	bool Collision() override;
+
+private:	
+	void TranslateAndRotate(const Vector2& nV, const float& angle) override;
 };
 

@@ -33,3 +33,8 @@ bool CStar::Collision()
 {
 	return false;
 }
+
+void CStar::TranslateAndRotate(const Vector2& nV, const float& angle)
+{
+
+}

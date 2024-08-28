@@ -12,4 +12,9 @@ public:
 	void Update(const float& deltaTime) override;
 	void Draw(const HDC& hdc) const override;
 	bool Collision() override;
+
+private:
+
+	// CObject을(를) 통해 상속됨
+	void TranslateAndRotate(const Vector2& nV, const float& angle) override;
 };

@@ -2,20 +2,33 @@
 
 #include <cmath>
 
-struct Vector2
+class Vector2
 {
 public:
 	float x;
 	float y;
 
-	explicit Vector2(const float& x, const float& y) : x{ x }, y{ y }
+	explicit constexpr Vector2() : Vector2{ 0.0f, 0.0f }
 	{
 
 	}
 
-	explicit Vector2(const int& x, const int& y) : x{ static_cast<float>(x) }, y{ static_cast<float>(y) }
+	explicit constexpr Vector2(const float& x, const float& y) : x{ x }, y{ y }
 	{
 
+	}
+
+	explicit constexpr Vector2(const int& x, const int& y) : x{ static_cast<float>(x) }, y{ static_cast<float>(y) }
+	{
+
+	}
+
+	constexpr Vector2& operator+=(const Vector2& other)
+	{
+		x += other.x;
+		y += other.y;
+
+		return *this;
 	}
 
 	Vector2 Normalize() const

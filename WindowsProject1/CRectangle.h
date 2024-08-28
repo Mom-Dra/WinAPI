@@ -7,6 +7,7 @@ class CRectangle : public CObject
 {
 private:
 	std::array<POINT, 4> points;
+	std::array<Vector2, 4> vPoints;
 	int length;
 
 public:
@@ -17,6 +18,6 @@ public:
 	bool Collision() override;
 
 private:
-	void MovePositionAndRotation();
+	void TranslateAndRotate(const Vector2& nV, const float& angle) override;
 };
 
