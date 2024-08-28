@@ -1,6 +1,6 @@
-#include "Matrix3x3.h"
 #include "Vector3.h"
 #include "Vector2.h"
+#include "Matrix3x3.h"
 #include <numbers>
 #include <stdexcept>
 #include <cmath>
@@ -104,4 +104,4 @@ constexpr Vector2 operator*(const Matrix3x3& m, const Vector2& InVector)
 	return v3.ToVector2();
 }
 
-constexpr Matrix3x3 Matrix3x3::Identity;
+constexpr Matrix3x3 Matrix3x3::Identity{ Vector3::UnitX, Vector3::UnitY, Vector3::UnitZ };

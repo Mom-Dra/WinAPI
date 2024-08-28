@@ -15,7 +15,6 @@ public:
 	friend constexpr Matrix3x3 operator*(const Matrix3x3& m, float InScalar);
 	friend constexpr Matrix3x3 operator*(const Matrix3x3& a, const Matrix3x3& b);
 	friend constexpr Vector3 operator*(const Matrix3x3& m, const Vector3& InVector);
-
 	friend constexpr Vector2 operator*(const Matrix3x3& m, const Vector2& InVector);
 
 	constexpr Matrix3x3 Transpose() const;

@@ -1,7 +1,6 @@
 #pragma once
 #include <array>
 #include "Vector2.h"
-//#include "Matrix3x3.h"
 
 class Vector3
 {
@@ -19,7 +18,6 @@ public:
 	friend constexpr Vector3 operator+(const Vector3& a, const Vector3& b);
 	friend constexpr Vector3 operator-(const Vector3& a, const Vector3& b);
 
-	constexpr Vector3& operator*=(const class Matrix3x3& m);
 	constexpr Vector3& operator*=(float InScale);
 	constexpr Vector3& operator/=(float InScale);
 	constexpr Vector3& operator+=(const Vector3& InVector);

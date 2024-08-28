@@ -1,7 +1,8 @@
 #include "Vector3.h"
+#include "Vector2.h"
+#include "Matrix3x3.h"
 #include <array>
 #include <stdexcept>
-#include "Matrix3x3.h"
 
 constexpr Vector3::Vector3() : Scalars{ std::array<float, Dimension>{ 0.0f, 0.0f , 0.0f } }
 {
@@ -37,12 +38,6 @@ constexpr float& Vector3::operator[](int index)
 constexpr Vector3 Vector3::operator-() const
 {
 	return Vector3{ -x, -y, -z };
-}
-
-constexpr Vector3& Vector3::operator*=(const Matrix3x3& m)
-{
-	*this = m * (*this);
-	return *this;
 }
 
 constexpr Vector3& Vector3::operator*=(float InScale)

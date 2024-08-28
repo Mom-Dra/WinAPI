@@ -13,12 +13,12 @@ public:
 
 	}
 
-	explicit constexpr Vector2(const float& x, const float& y) : x{ x }, y{ y }
+	explicit constexpr Vector2(float x, float y) : x{ x }, y{ y }
 	{
 
 	}
 
-	explicit constexpr Vector2(const int& x, const int& y) : x{ static_cast<float>(x) }, y{ static_cast<float>(y) }
+	explicit constexpr Vector2(int x, int y) : x{ static_cast<float>(x) }, y{ static_cast<float>(y) }
 	{
 
 	}
