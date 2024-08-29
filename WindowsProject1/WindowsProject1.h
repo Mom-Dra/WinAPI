@@ -132,7 +132,7 @@ void GenerateObject(std::vector<std::unique_ptr<CObject>>& objects, const LPARAM
 	Vector2 center{ LOWORD(lParam), HIWORD(lParam) };
 	Vector2 moveDir{ GetRandomInt(-10, 10), GetRandomInt(-10, 10) };
 
-	switch (GetRandomInt(0, 2))
+	switch (GetRandomInt(1, 1))
 	{
 		// ¿ø
 	case 0:
