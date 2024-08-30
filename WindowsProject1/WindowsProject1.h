@@ -14,7 +14,9 @@
 #include "CStar.h"
 
 constexpr int SPEED_MIN = 30;
-constexpr int SPEED_MAX = 100;
+constexpr int SPEED_MAX = 200;
+
+extern RECT rectView;
 
 void DrawCircle(const HDC& hdc, const POINT& center, const int& Radius)
 {
@@ -132,7 +134,7 @@ void GenerateObject(std::vector<std::unique_ptr<CObject>>& objects, const LPARAM
 	Vector2 center{ LOWORD(lParam), HIWORD(lParam) };
 	Vector2 moveDir{ GetRandomInt(-10, 10), GetRandomInt(-10, 10) };
 
-	switch (GetRandomInt(1, 1))
+	switch (GetRandomInt(0, 2))
 	{
 		// ¿ø
 	case 0:

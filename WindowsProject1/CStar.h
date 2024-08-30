@@ -2,11 +2,13 @@
 #include "CObject.h"
 #include "framework.h"
 #include <vector>
+#include "Vector2.h"
 
 class CStar : public CObject
 {
 private:
 	std::vector<POINT> points;
+	std::vector<Vector2> vPoints;
 	int radius;
 	int count;
 
@@ -18,6 +20,7 @@ public:
 	bool Collision() override;
 
 private:	
-	void TranslateAndRotate(const Vector2& nV, const float& angle) override;
+	void TranslateAndRotate(const Vector2& nV, float angle) override;
+	void SetPoints(const Matrix3x3& m) override;
 };
 

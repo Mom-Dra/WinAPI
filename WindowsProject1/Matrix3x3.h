@@ -69,7 +69,7 @@ constexpr Matrix3x3 Matrix3x3::Transpose() const
 
 constexpr void Matrix3x3::SetTranslation(const Vector2& nV)
 {
-	*this = Identity;
+	*this = Matrix3x3::Identity;
 
 	Cols[2].x = nV.x;
 	Cols[2].y = nV.y;

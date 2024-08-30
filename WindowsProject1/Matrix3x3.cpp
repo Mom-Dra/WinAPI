@@ -5,7 +5,8 @@
 #include <stdexcept>
 #include <cmath>
 
-constexpr Matrix3x3 Matrix3x3::Identity{ Vector3::UnitX, Vector3::UnitY, Vector3::UnitZ };
+//constexpr Matrix3x3 Matrix3x3::Identity{ Vector3::UnitX, Vector3::UnitY, Vector3::UnitZ };
+constexpr Matrix3x3 Matrix3x3::Identity{ Vector3{1.0f, 0.0f, 0.0f}, Vector3{0.0f, 1.0f, 0.0f}, Vector3{0.0f, 0.0f, 1.0f} };
 
 //Matrix3x3::Matrix3x3() : Matrix3x3{ Vector3::UnitX, Vector3::UnitY, Vector3::UnitZ }
 //{
@@ -115,7 +116,7 @@ constexpr Matrix3x3 Matrix3x3::Identity{ Vector3::UnitX, Vector3::UnitY, Vector3
 
 void Matrix3x3::SetRotation(const float& angle)
 {
-	*this = Identity;
+	*this = Matrix3x3::Identity;
 
 	float radian{ angle * std::numbers::pi_v<float> / 180.0f };
 
@@ -131,7 +132,7 @@ void Matrix3x3::SetRotation(const float& angle)
 
 void Matrix3x3::SetTranslationAndRotation(const Vector2& nV, const float& angle)
 {
-	*this = Identity;
+	*this = Matrix3x3::Identity;
 
 	Cols[2].x = nV.x;
 	Cols[2].y = nV.y;

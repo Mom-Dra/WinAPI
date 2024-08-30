@@ -26,13 +26,7 @@ CRectangle::CRectangle(const Vector2& center, const int& speed, const int& lengt
 
 	transposeMatrix.SetTranslation(center);
 
-	for (int i = 0; i < 4; ++i)
-	{
-		Vector2 nPoint = transposeMatrix * vPoints[i];
-
-		points[i].x = static_cast<LONG>(nPoint.x);
-		points[i].y = static_cast<LONG>(nPoint.y);
-	}
+	SetPoints(transposeMatrix);
 }
 
 void CRectangle::Update(const float& deltaTime)
@@ -72,16 +66,23 @@ bool CRectangle::Collision()
 	return false;
 }
 
-void CRectangle::TranslateAndRotate(const Vector2& nV, const float& angle)
+void CRectangle::TranslateAndRotate(const Vector2& nV, float nAngle)
 {
-	center += nV;
-	transposeMatrix.SetTranslationAndRotation(nV, angle);
+	SetCenter(center + nV);
+	SetAngle(angle + nAngle);
 
+	transposeMatrix.SetTranslationAndRotation(center, angle);
+
+	SetPoints(transposeMatrix);
+}
+
+void CRectangle::SetPoints(const Matrix3x3& m)
+{
 	for (int i = 0; i < 4; ++i)
 	{
-		Vector2 nPoint = transposeMatrix * vPoints[i];
+		Vector2 nPoint = m * vPoints[i];
 
-		points[i].x = static_cast<LONG> (vPoints[i].x);
-		points[i].y = static_cast<LONG> (vPoints[i].y);
+		points[i].x = static_cast<LONG>(nPoint.x);
+		points[i].y = static_cast<LONG>(nPoint.y);
 	}
 }

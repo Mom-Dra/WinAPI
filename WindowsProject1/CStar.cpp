@@ -8,20 +8,24 @@ CStar::CStar(const Vector2& center, const int& speed, const int& radius, const i
 	double miniRadius{ tempLen / cos(theta / 2) };
 
 	points.resize(count * 2);
+	vPoints.resize(count * 2);
 
 	for (int i = 0; i < count; ++i)
 	{
-		points[2 * i].x = center.x + radius * cos(theta * i - theta / 4);
-		points[2 * i].y = center.y + radius * sin(theta * i - theta / 4);
+		vPoints[2 * i].x = radius * cos(theta * i - theta / 4);
+		vPoints[2 * i].y = radius * sin(theta * i - theta / 4);
 
-		points[2 * i + 1].x = center.x + miniRadius * cos(theta * i + theta / 2 - theta / 4);
-		points[2 * i + 1].y = center.y + miniRadius * sin(theta * i + theta / 2 - theta / 4);
+		vPoints[2 * i + 1].x = miniRadius * cos(theta * i + theta / 2 - theta / 4);
+		vPoints[2 * i + 1].y = miniRadius * sin(theta * i + theta / 2 - theta / 4);
 	}
+
+	transposeMatrix.SetTranslation(center);
+	SetPoints(transposeMatrix);
 }
 
 void CStar::Update(const float& deltaTime)
 {
-	
+	TranslateAndRotate(moveDir * speed * deltaTime, speed * deltaTime);
 }
 
 void CStar::Draw(const HDC& hdc) const
@@ -34,7 +38,22 @@ bool CStar::Collision()
 	return false;
 }
 
-void CStar::TranslateAndRotate(const Vector2& nV, const float& angle)
+void CStar::TranslateAndRotate(const Vector2& nV, float nAngle)
 {
+	SetCenter(center + nV);
+	SetAngle(angle + nAngle);
 
+	transposeMatrix.SetTranslationAndRotation(center, angle);
+
+	SetPoints(transposeMatrix);
+}
+
+void CStar::SetPoints(const Matrix3x3& m)
+{
+	for (int i = 0; i < count * 2; ++i)
+	{
+		Vector2 nPoint = m * vPoints[i];
+		points[i].x = static_cast<LONG>(nPoint.x);
+		points[i].y = static_cast<LONG>(nPoint.y);
+	}
 }

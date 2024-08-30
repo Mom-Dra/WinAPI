@@ -18,6 +18,7 @@ public:
 	bool Collision() override;
 
 private:
-	void TranslateAndRotate(const Vector2& nV, const float& angle) override;
+	void TranslateAndRotate(const Vector2& nV, float angle) override;
+	void SetPoints(const Matrix3x3& m) override;
 };
 

@@ -16,5 +16,5 @@ public:
 private:
 
 	// CObject을(를) 통해 상속됨
-	void TranslateAndRotate(const Vector2& nV, const float& angle) override;
+	void TranslateAndRotate(const Vector2& nV, float angle) override;
 };

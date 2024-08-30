@@ -23,7 +23,7 @@ bool CCircle::Collision()
     return false;
 }
 
-void CCircle::TranslateAndRotate(const Vector2& nV, const float& angle)
+void CCircle::TranslateAndRotate(const Vector2& nV, float angle)
 {
 
 }
