@@ -146,6 +146,7 @@
     <ClCompile Include="CRectangle.cpp" />
     <ClCompile Include="CStar.cpp" />
     <ClCompile Include="Matrix3x3.cpp" />
+    <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="WindowsProject1.cpp" />
   </ItemGroup>

@@ -16,7 +16,8 @@
 constexpr int SPEED_MIN = 30;
 constexpr int SPEED_MAX = 200;
 
-extern RECT rectView;
+extern int window_width;
+extern int window_height;
 
 void DrawCircle(const HDC& hdc, const POINT& center, const int& Radius)
 {
@@ -109,10 +110,25 @@ void DrawCross(const HDC& hdc, const POINT& center, int length, int pos)
 
 void DrawObjects(const std::vector<std::unique_ptr<CObject>>& objects, const HDC& hdc)
 {
+	HBRUSH hBrush = CreateSolidBrush(RGB(255, 0, 0));
+	HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+	SelectObject(hdc, hOldBrush);
+
 	for (const auto& object : objects)
 	{
-		object->Draw(hdc);
+		if (object->GetCollision())
+		{
+			hOldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+			object->Draw(hdc);
+			SelectObject(hdc, hOldBrush);
+		}
+		else
+		{
+			object->Draw(hdc);
+		}
 	}
+
+	DeleteObject(hBrush);
 }
 
 int GetRandomInt(int min, int max)
@@ -156,5 +172,32 @@ void Update(const std::vector<std::unique_ptr<CObject>>& objects, const float& d
 	for (const auto& object : objects)
 	{
 		object->Update(deltaTime);
+	}
+}
+
+void CheckCollision(const std::vector<std::unique_ptr<CObject>>& objects)
+{
+	// 벽과의 충돌
+	for (auto& object : objects)
+	{
+		object->CheckCollisionWithWall(window_width, window_height);
+	}
+
+	// 물체끼리의 충돌
+	size_t size{ objects.size() };
+	for (size_t i = 0; i < size; ++i)
+	{
+		for (size_t j = i + 1; j < size; ++j)
+		{
+			objects[i]->CheckCollisionWithObject(*objects[j]);
+		}
+	}
+}
+
+void InitColiision(const std::vector<std::unique_ptr<CObject>>& objects)
+{
+	for (auto& object : objects)
+	{
+		object->InitCollision();
 	}
 }

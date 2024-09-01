@@ -19,7 +19,8 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
-RECT rectView;
+int window_width;
+int window_height;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -145,8 +146,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
-        CreateCaret(hWnd, NULL, 5, 15);
-        ShowCaret(hWnd);
+        /*CreateCaret(hWnd, NULL, 5, 15);
+        ShowCaret(hWnd);*/
 
         SetTimer(hWnd, WM_TIMER_1, DELTATIME * 1000, NULL);
         break;
@@ -181,6 +182,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             //DrawCross(hdc, POINT{ 500, 500 }, 100, pos);
 
             DrawObjects(objects, hdc);
+            InitColiision(objects);
 
             EndPaint(hWnd, &ps);
         }
@@ -208,13 +210,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
         case WM_TIMER_1:
             Update(objects, DELTATIME);
+            CheckCollision(objects);
             break;
         }
 
         InvalidateRgn(hWnd, NULL, TRUE);
         break;
     case WM_SIZE:
-        GetClientRect(hWnd, &rectView);
+        window_width = LOWORD(lParam);
+        window_height = HIWORD(lParam);
         break;
 
     default:
