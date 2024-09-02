@@ -3,6 +3,10 @@
 #include "framework.h"
 #include "resource.h"
 
+constexpr int MAX_STR_SIZE{ 100 };
+constexpr int SHOW_STR_SIZE{ 100 };
+
+
 void OutFromFile(TCHAR fileName[], const HWND& hWnd)
 {
 	FILE* fPtr;

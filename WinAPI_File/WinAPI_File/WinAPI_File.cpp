@@ -129,6 +129,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     TCHAR str[100], lpstrFile[100] = _T("");
     TCHAR filter[] = _T("Every File(*.*)\0*.*\0Text File\0*.txt;*.doc\0");
 
+    static TCHAR chatStr[MAX_STR_SIZE][100];
+    static int strSize{ 0 };
+    static int inputSize{ 0 };
+
     switch (message)
     {
     case WM_COMMAND:
@@ -146,7 +150,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 OFN.lpstrFilter = filter;
                 OFN.lpstrFile = lpstrFile;
                 OFN.nMaxFile = 100;
-                OFN.lpstrInitialDir = _T("."); 
+                OFN.lpstrInitialDir = _T(".");
 
                 if (GetOpenFileName(&OFN) != 0)
                 {
@@ -181,8 +185,46 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+
+            // 기존거 출력
+            for (int i = 0; i < strSize; ++i)
+            {
+                TextOut(hdc, 0, i * 15, chatStr[i], _tcslen(chatStr[i]));
+            }
+
+            // 현재 입력 출력
+            TextOut(hdc, 0, strSize * 15, chatStr[strSize], _tcslen(chatStr[strSize]));
+
             EndPaint(hWnd, &ps);
         }
+        break;
+    case WM_CHAR:
+    {
+        TCHAR ch{ static_cast<TCHAR>(wParam) };
+
+        if (ch == '\r')
+        {
+            strSize = (strSize + 1) % 100;
+            inputSize = 0;
+        }
+        else if (ch == '\b')
+        {
+            if (inputSize > 0)
+            {
+                chatStr[strSize][--inputSize] = NULL;
+            }
+        }
+        else
+        {
+            chatStr[strSize][inputSize++] = ch;
+            chatStr[strSize][inputSize] = NULL;
+        }
+
+        InvalidateRgn(hWnd, NULL, TRUE);
+    }
+        break;
+    case WM_KEYDOWN:
+        
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
