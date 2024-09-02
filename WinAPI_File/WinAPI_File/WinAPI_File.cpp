@@ -1,18 +1,10 @@
-﻿// WindowsProject1.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+﻿// WinAPI_File.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
-
 #include "framework.h"
-#include "WindowsProject1.h"
+#include "WinAPI_File.h"
 #include "resource.h"
 #include <commdlg.h>
-#include <vector>
-#include <memory>
-#include <random>
-#include "CObject.h"
-#include "CCircle.h"
 
-#define WM_TIMER_1 1
-constexpr double DELTATIME{ 0.01667 };
 
 #define MAX_LOADSTRING 100
 
@@ -20,9 +12,6 @@ constexpr double DELTATIME{ 0.01667 };
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
-
-int window_width;
-int window_height;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -42,7 +31,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_WINDOWSPROJECT1, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_WINAPIFILE, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // 애플리케이션 초기화를 수행합니다:
@@ -51,7 +40,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINDOWSPROJECT1));
+    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINAPIFILE));
 
     MSG msg;
 
@@ -86,7 +75,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINDOWSPROJECT1));
+    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINAPIFILE));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = MAKEINTRESOURCEW(IDR_MENU1);
@@ -136,28 +125,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    const int MAX_STR_SIZE = 10;
-    //static TCHAR str[MAX_STR_SIZE][100];
-    static int strCount = 0;
-    static int count;
-    static SIZE caretSize;
-    static int pos;
-
-    static std::vector<std::unique_ptr<CObject>> objects;
-
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
     TCHAR filter[] = _T("Every File(*.*)\0*.*\0Text File\0*.txt;*.doc\0");
-    
+
     switch (message)
     {
-    case WM_CREATE:
-        /*CreateCaret(hWnd, NULL, 5, 15);
-        ShowCaret(hWnd);*/
-
-        //SetTimer(hWnd, WM_TIMER_1, DELTATIME * 1000, NULL);
-        break;
-
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -166,14 +139,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
             case ID_FILEOPEN:
                 MessageBox(hWnd, _T("새 파일을 열겠습니까?"), _T("새 파일 선택"), MB_OKCANCEL);
-                
+
                 memset(&OFN, 0, sizeof(OPENFILENAME));
                 OFN.lStructSize = sizeof(OPENFILENAME);
                 OFN.hwndOwner = hWnd;
                 OFN.lpstrFilter = filter;
                 OFN.lpstrFile = lpstrFile;
                 OFN.nMaxFile = 100;
-                OFN.lpstrInitialDir = _T(".");
+                OFN.lpstrInitialDir = _T("."); 
 
                 if (GetOpenFileName(&OFN) != 0)
                 {
@@ -187,18 +160,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 int answer;
                 answer = MessageBox(hWnd, _T("파일을 저장하고 끝내겠습니까?"), _T("끝내기 선택"), MB_YESNOCANCEL);
-                
+
                 if (answer == IDYES || answer == IDNO)
                     PostQuitMessage(0);
             }
-                break;
+            break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
             case IDM_EXIT:
                 DestroyWindow(hWnd);
                 break;
-
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
@@ -209,54 +181,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-
-            //POINT point{ 500, 500 };
-            //DrawSunflower(hdc, point, 50, 9);
-            //Rectangle(hdc, 100, 100, 200, 200);
-            //DrawStar(hdc, POINT{ 500, 500 }, 100);
-            //DrawCross(hdc, POINT{ 500, 500 }, 100, pos);
-
-            /*DrawObjects(objects, hdc);
-            InitColiision(objects);*/
-
             EndPaint(hWnd, &ps);
-            
         }
-        break;  
+        break;
     case WM_DESTROY:
-        /*HideCaret(hWnd);
-        DestroyCaret();*/
         PostQuitMessage(0);
         break;
-    case WM_KEYDOWN:
-        break;
-    case WM_CHAR:
-        break;
-    case WM_KEYUP:
-        break;
-    case WM_LBUTTONDOWN:
-        break;
-    case WM_LBUTTONUP:
-        //GenerateObject(objects, lParam);
-        //InvalidateRgn(hWnd, NULL, TRUE);
-    
-        break;
-    case WM_TIMER:
-        switch (wParam)
-        {
-        case WM_TIMER_1:
-            Update(objects, DELTATIME);
-            CheckCollision(objects);
-            break;
-        }
-
-        InvalidateRgn(hWnd, NULL, TRUE);
-        break;
-    case WM_SIZE:
-        window_width = LOWORD(lParam);
-        window_height = HIWORD(lParam);
-        break;
-
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
