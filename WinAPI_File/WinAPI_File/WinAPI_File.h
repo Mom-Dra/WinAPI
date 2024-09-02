@@ -6,7 +6,6 @@
 constexpr int MAX_STR_SIZE{ 100 };
 constexpr int SHOW_STR_SIZE{ 100 };
 
-
 void OutFromFile(TCHAR fileName[], const HWND& hWnd)
 {
 	FILE* fPtr;
@@ -31,4 +30,39 @@ void OutFromFile(TCHAR fileName[], const HWND& hWnd)
 
 	fclose(fPtr);
 	ReleaseDC(hWnd, hdc);
+}
+
+void SaveFile(TCHAR chatStr[MAX_STR_SIZE][100], int strSize)
+{
+	FILE* fptr;
+
+	TCHAR fileName[] = _T("chatlog.txt");
+
+#ifdef _UNICODE
+	_tfopen_s(&fptr, fileName, _T("w"));
+#else
+	_tfopen_s(&fptr, fileName, _T("w");
+#endif
+
+	// 3°³
+	// a b c
+	// 0 1 2 3
+
+	for (int i = 0; i < strSize; ++i)
+	{
+		if (chatStr[i][_tcslen(chatStr[i])] == NULL)
+			chatStr[i][_tcslen(chatStr[i])] = _T('\n');
+
+		_fputts(chatStr[i], fptr);
+	}
+
+	if (_tcslen(chatStr[strSize]) != 0)
+	{
+		if (chatStr[strSize][_tcslen(chatStr[strSize])] == NULL)
+			chatStr[strSize][_tcslen(chatStr[strSize])] = _T('\n');
+
+		_fputts(chatStr[strSize], fptr);
+	}
+
+	fclose(fptr);
 }

@@ -165,8 +165,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 int answer;
                 answer = MessageBox(hWnd, _T("파일을 저장하고 끝내겠습니까?"), _T("끝내기 선택"), MB_YESNOCANCEL);
 
-                if (answer == IDYES || answer == IDNO)
+                if (answer == IDYES)
+                {
+                    SaveFile(chatStr, strSize);
                     PostQuitMessage(0);
+                }
+                else if (answer == IDNO)
+                {
+                    PostQuitMessage(0);
+                }
+                    
             }
             break;
             case IDM_ABOUT:
