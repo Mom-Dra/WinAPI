@@ -131,6 +131,7 @@
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="Matrix3x3.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Resource.h" />
@@ -142,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Matrix3x3.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Vector2.cpp" />
