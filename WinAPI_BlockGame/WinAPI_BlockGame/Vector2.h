@@ -4,6 +4,7 @@
 class Vector2
 {
 public:
+	static const Vector2 Zero;
 	static const Vector2 UnitX;
 	static const Vector2 UnitY;
 

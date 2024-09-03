@@ -12,6 +12,8 @@ public:
 
 	inline constexpr Vector2 GetCenter() const;
 	inline constexpr void SetCenter(const Vector2& center);
+
+	inline constexpr virtual void Init() = 0;
 	inline virtual void Draw(const HDC& hdc) const = 0;
 	inline constexpr virtual void Update(const float deltaTime) = 0;
 

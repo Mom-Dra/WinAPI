@@ -17,6 +17,7 @@ public:
 	inline constexpr float GetTop() const;
 	inline constexpr float GetBottom() const;
 
+	inline constexpr void Init() override;
 	inline void Draw(const HDC& hdc) const override;
 	inline constexpr void Update(const float deltaTime) override;
 };
@@ -44,6 +45,11 @@ inline constexpr float Block::GetTop() const
 inline constexpr float Block::GetBottom() const
 {
 	return GetCenter().y + height / 2;
+}
+
+inline constexpr void Block::Init()
+{
+
 }
 
 inline void Block::Draw(const HDC& hdc) const
