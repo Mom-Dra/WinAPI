@@ -145,9 +145,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     static std::vector<std::unique_ptr<CObject>> objects;
 
-    OPENFILENAME OFN;
-    TCHAR str[100], lpstrFile[100] = _T("");
-    TCHAR filter[] = _T("Every File(*.*)\0*.*\0Text File\0*.txt;*.doc\0");
+    //OPENFILENAME OFN;
+    //TCHAR str[100], lpstrFile[100] = _T("");
+    //TCHAR filter[] = _T("Every File(*.*)\0*.*\0Text File\0*.txt;*.doc\0");
     
     switch (message)
     {
@@ -155,7 +155,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         /*CreateCaret(hWnd, NULL, 5, 15);
         ShowCaret(hWnd);*/
 
-        //SetTimer(hWnd, WM_TIMER_1, DELTATIME * 1000, NULL);
+        SetTimer(hWnd, WM_TIMER_1, DELTATIME * 1000, NULL);
         break;
 
     case WM_COMMAND:
@@ -164,33 +164,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // 메뉴 선택을 구문 분석합니다:
             switch (wmId)
             {
-            case ID_FILEOPEN:
-                MessageBox(hWnd, _T("새 파일을 열겠습니까?"), _T("새 파일 선택"), MB_OKCANCEL);
-                
-                memset(&OFN, 0, sizeof(OPENFILENAME));
-                OFN.lStructSize = sizeof(OPENFILENAME);
-                OFN.hwndOwner = hWnd;
-                OFN.lpstrFilter = filter;
-                OFN.lpstrFile = lpstrFile;
-                OFN.nMaxFile = 100;
-                OFN.lpstrInitialDir = _T(".");
+            //case ID_FILEOPEN:
+            //    MessageBox(hWnd, _T("새 파일을 열겠습니까?"), _T("새 파일 선택"), MB_OKCANCEL);
+            //    
+            //    memset(&OFN, 0, sizeof(OPENFILENAME));
+            //    OFN.lStructSize = sizeof(OPENFILENAME);
+            //    OFN.hwndOwner = hWnd;
+            //    OFN.lpstrFilter = filter;
+            //    OFN.lpstrFile = lpstrFile;
+            //    OFN.nMaxFile = 100;
+            //    OFN.lpstrInitialDir = _T(".");
 
-                if (GetOpenFileName(&OFN) != 0)
-                {
-                    OutFromFile(OFN.lpstrFile, hWnd);
-                    /*_stprintf_s(str, _T("%s 파일을 열겠습니까?"), OFN.lpstrFile);
-                    MessageBox(hWnd, str, _T("열기 선택"), MB_OK);*/
-                }
+            //    if (GetOpenFileName(&OFN) != 0)
+            //    {
+            //        OutFromFile(OFN.lpstrFile, hWnd);
+            //        /*_stprintf_s(str, _T("%s 파일을 열겠습니까?"), OFN.lpstrFile);
+            //        MessageBox(hWnd, str, _T("열기 선택"), MB_OK);*/
+            //    }
 
-                break;
-            case ID_FILESAVE:
-            {
-                int answer;
-                answer = MessageBox(hWnd, _T("파일을 저장하고 끝내겠습니까?"), _T("끝내기 선택"), MB_YESNOCANCEL);
-                
-                if (answer == IDYES || answer == IDNO)
-                    PostQuitMessage(0);
-            }
+            //    break;
+            //case ID_FILESAVE:
+            //{
+            //    int answer;
+            //    answer = MessageBox(hWnd, _T("파일을 저장하고 끝내겠습니까?"), _T("끝내기 선택"), MB_YESNOCANCEL);
+            //    
+            //    if (answer == IDYES || answer == IDNO)
+            //        PostQuitMessage(0);
+            //}
                 break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -216,8 +216,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             //DrawStar(hdc, POINT{ 500, 500 }, 100);
             //DrawCross(hdc, POINT{ 500, 500 }, 100, pos);
 
-            /*DrawObjects(objects, hdc);
-            InitColiision(objects);*/
+            DrawObjects(objects, hdc);
+            InitColiision(objects);
 
             EndPaint(hWnd, &ps);
             
@@ -237,8 +237,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONDOWN:
         break;
     case WM_LBUTTONUP:
-        //GenerateObject(objects, lParam);
-        //InvalidateRgn(hWnd, NULL, TRUE);
+        GenerateObject(objects, lParam);
+        InvalidateRgn(hWnd, NULL, TRUE);
     
         break;
     case WM_TIMER:
