@@ -1,46 +1,44 @@
 #pragma once
-#include <vector>
-#include <memory>
 #include "Object.h"
 #include "Block.h"
 #include "Ball.h"
-
-class GameStrategy
-{
-public:
-	virtual ~GameStrategy() = default;
-	inline constexpr virtual void CreateGame() const = 0;
-};
-
-class DefaultGameStrategy : public GameStrategy
-{
-public:
-	inline constexpr void CreateGame() const override
-	{
-
-	}
-};
+#include "framework.h"
+#include "IGameStrategy.h"
+#include <vector>
+#include <memory>
 
 class GameManager
 {
 private:
 	std::vector<Block> blocks;
 	std::vector<Ball> balls;
-	std::unique_ptr<GameStrategy> strategy;
+	std::unique_ptr<IGameStrategy> strategy;
+
+	Block block;
 
 public:
-	inline constexpr explicit GameManager();
-	inline constexpr void InitGame();
-	inline constexpr void SetStrategy(std::unique_ptr<GameStrategy> newStrategy);
+	static inline constexpr int FPS{ 60 };
+	static inline constexpr float DELTATIME{ 1.0f / static_cast<float>(FPS) };
+	static inline constexpr int WIDTH{ 700 };
+	static inline constexpr int HEIGHT{ 700 };
+
+public:
+	inline explicit GameManager(IGameStrategy* gameStrategy);
+	inline constexpr void InitGame() noexcept;
+	inline constexpr void CreateGame() noexcept;
+
+	inline void SetStrategy(IGameStrategy* newStrategy);
 	inline constexpr void Update(const float deltaTime);
+	inline constexpr void Draw(const HDC& hdc) const noexcept;
+	inline constexpr void CheckCollision() const noexcept;
 };
 
-inline constexpr GameManager::GameManager()
+inline GameManager::GameManager(IGameStrategy* gameStrategy) : strategy{ gameStrategy }
 {
-	InitGame();
+	CreateGame();
 }
 
-inline constexpr void GameManager::InitGame()
+inline constexpr void GameManager::InitGame() noexcept
 {
 	for (Block& block : blocks)
 	{
@@ -53,12 +51,49 @@ inline constexpr void GameManager::InitGame()
 	}
 }
 
-inline constexpr void GameManager::SetStrategy(std::unique_ptr<GameStrategy> newStrategy)
+inline constexpr void GameManager::CreateGame() noexcept
 {
-	strategy = std::move(newStrategy);
+	strategy->CreateGame(blocks, balls, block);
+}
+
+inline void GameManager::SetStrategy(IGameStrategy* newStrategy)
+{
+	std::unique_ptr<IGameStrategy> tmp{ newStrategy };
+	strategy = std::move(tmp);
 }
 
 inline constexpr void GameManager::Update(const float deltaTime)
 {
+	for (Block& block : blocks)
+	{
+		block.Update(deltaTime);
+	}
+
+	for (Ball& ball : balls)
+	{
+		ball.Update(deltaTime);
+	}
+}
+
+inline constexpr void GameManager::Draw(const HDC& hdc) const noexcept
+{
+	for (const Block& block : blocks)
+	{
+		block.Draw(hdc);
+	}
+
+	for (const Ball& ball : balls)
+	{
+		ball.Draw(hdc);
+	}
+}
+
+inline constexpr void GameManager::CheckCollision() const noexcept
+{
+	// 공이 블럭과 충돌하면 튀겨야 한다!!
+
+	// Code!!
+
+
 
 }

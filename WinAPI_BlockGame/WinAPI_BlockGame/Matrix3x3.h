@@ -15,7 +15,8 @@ public:
 	std::array<Vector3, Rank> Cols;
 
 public:
-	inline explicit constexpr Matrix3x3(const Vector3& InCol0, const Vector3& InCol1, const Vector3& InCol2);
+	inline constexpr explicit Matrix3x3();
+	inline constexpr explicit Matrix3x3(const Vector3& InCol0, const Vector3& InCol1, const Vector3& InCol2);
 
 	inline constexpr const Vector3& operator[](int index) const;
 	inline constexpr Vector3& operator[](int index);
@@ -29,6 +30,11 @@ public:
 	inline void SetRotation(const float& angle);
 	inline void SetTranslationAndRotation(const Vector2& nV, const float& angle);
 };
+
+inline constexpr Matrix3x3::Matrix3x3() : Matrix3x3{ Vector3::UnitX, Vector3::UnitY, Vector3::UnitZ }
+{
+
+}
 
 inline constexpr Matrix3x3::Matrix3x3(const Vector3& InCol0, const Vector3& InCol1, const Vector3& InCol2) : Cols{ InCol0, InCol1, InCol2 }
 {

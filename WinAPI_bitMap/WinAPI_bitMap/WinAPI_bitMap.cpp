@@ -44,12 +44,35 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
 
     // 기본 메시지 루프입니다:
-    while (GetMessage(&msg, nullptr, 0, 0))
+    //while (GetMessage(&msg, nullptr, 0, 0))
+    //{
+    //    if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+    //    {
+    //        TranslateMessage(&msg);
+    //        DispatchMessage(&msg);
+    //    }
+    //}
+
+    while (true)
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            if (msg.message == WM_QUIT)
+            {
+                break;
+            }
+            else
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+        }
+        else
+        {
+            // : update and drawing
+            // : to do something
+
+            Update();
         }
     }
 
@@ -127,6 +150,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
+        GetClientRect(hWnd, &rectView);
         CreateBitMap();
         SetTimer(hWnd, TIMER_ANI, 33, AniProc);
         break;
@@ -136,6 +160,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // 메뉴 선택을 구문 분석합니다:
             switch (wmId)
             {
+            case IDC_BTN_START:
+            {
+
+            }
+            break;
+
+            case IDC_BTN_PAUSE:
+            {
+
+            }
+                break;
+                
+            case IDC_BTN_CLOSE:
+            {
+
+            }
+                break;
+
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
@@ -153,12 +195,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
 
-            DrawBitMap(hWnd, hdc);
+            //DrawBitMap(hWnd, hdc);
+            DrawBitMapDoubleBuffering(hWnd, hdc);
+
+            //TextOut(hdc, 10, 10, sKeyState, _tc)
 
             EndPaint(hWnd, &ps);
         }
         break;
-    case WM_TIMER:
+    case WM_LBUTTONUP:
+
+
+        break;
+
+    case WM_RBUTTONDOWN:
+
+
         break;
 
     case WM_DESTROY:

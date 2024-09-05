@@ -3,6 +3,8 @@
 
 #include "framework.h"
 #include "WinAPI_BlockGame.h"
+#include "GameManager.h"
+#include "DefaultGameStrategy.h"
 
 #define MAX_LOADSTRING 100
 
@@ -98,7 +100,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, GameManager::WIDTH, GameManager::HEIGHT, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -123,8 +125,14 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    static GameManager gameManager{ new DefaultGameStrategy{} };
+
     switch (message)
     {
+    case WM_CREATE:
+        SetTimer(hWnd, TIMER_UPDATE, GameManager::DELTATIME * 1000.0f, NULL);
+        break;
+
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -147,9 +155,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+           
+            gameManager.Draw(hdc);
+
             EndPaint(hWnd, &ps);
         }
         break;
+    case WM_TIMER:
+        switch (wParam)
+        {
+        case TIMER_UPDATE:
+            gameManager.Update(GameManager::DELTATIME);
+            InvalidateRect(hWnd, NULL, TRUE);
+            break;
+        }
+        break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

@@ -4,6 +4,12 @@
 #include "resource.h"
 
 #define TIMER_ANI 3
+#define TIMER_KEYSTATE 4
+
+
+HWND g_hWnd{ NULL };
+HINSTANCE g_bInst;
+
 
 HBITMAP hBackImage;
 BITMAP bitBack;
@@ -14,14 +20,24 @@ BITMAP bitTransparent;
 HBITMAP hAniImage;
 BITMAP bitAni;
 
-constexpr int SPRITE_X = 57;
-constexpr int SPRITE_Y = 52;
-constexpr int SPRITE_COUNT = 16;
-constexpr int SPRITE_DIR = 2;
+constexpr int SPRITE_X{ 57 };
+constexpr int SPRITE_Y{ 52 };
+constexpr int SPRITE_COUNT{ 16 };
+constexpr int SPRITE_DIR{ 2 };
+
+constexpr int CIRCLE_RADIUS{ 50 };
 
 int Run_Frame_Max = 0;
 int Run_Frame_Min = 0;
 int currFrame = Run_Frame_Min;
+
+POINT ptAni{ 400, 400 };
+
+HBITMAP hDoubleBufferImage;
+RECT rectView;
+
+// 키가 뭐가 눌렸는지 확인 용도
+TCHAR sKeyState[128];
 
 void CreateBitMap()
 {
@@ -36,8 +52,6 @@ void CreateBitMap()
 		GetObject(hBackImage, sizeof(BITMAP), &bitBack);
 	}
 
-
-
 	hTransparentImage = (HBITMAP)LoadImage(NULL, TEXT("Image/sigong.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 	if (hTransparentImage == NULL)
 	{
@@ -48,7 +62,6 @@ void CreateBitMap()
 	{
 		GetObject(hTransparentImage, sizeof(BITMAP), &bitTransparent);
 	}
-
 
 	hAniImage = (HBITMAP)LoadImage(NULL, TEXT("Image/zero_run.bmp"), IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION);
 	if (hAniImage == NULL)
@@ -67,7 +80,7 @@ void CreateBitMap()
 }
 
 void DrawBitMap(const HWND& hWnd, const HDC& hdc)
-{
+{	
 	HDC hMemDC;
 	HBITMAP hOldBitmap;
 	int bx, by;
@@ -113,11 +126,30 @@ void DrawBitMap(const HWND& hWnd, const HDC& hdc)
 		int xStart { currFrame * bx };
 		int yStart{ 0 };
 
-		TransparentBlt(hdc, 400, 400, bx, by, hMemDC, xStart, yStart, bx, by, RGB(255, 0, 255));
+		TransparentBlt(hdc, ptAni.x, ptAni.y, bx, by, hMemDC, xStart, yStart, bx, by, RGB(255, 0, 255));
 
 		SelectObject(hMemDC, hOldBitmap);
 		DeleteDC(hMemDC);
 	}
+}
+
+void DrawBitMapDoubleBuffering(const HWND& hWnd, const HDC& hdc)
+{
+	HDC hDoubleBufferDC;
+	HBITMAP hOldDoubleBufferBitMap;
+	int dx, dy;
+
+	hDoubleBufferDC = CreateCompatibleDC(hdc);
+	if (hDoubleBufferImage == NULL)
+		hDoubleBufferImage = CreateCompatibleBitmap(hdc, rectView.right, rectView.bottom);
+
+	hOldDoubleBufferBitMap = (HBITMAP)SelectObject(hDoubleBufferDC, hDoubleBufferImage);
+
+	DrawBitMap(hWnd, hDoubleBufferDC);
+
+	BitBlt(hdc, 0, 0, rectView.right, rectView.bottom, hDoubleBufferDC, 0, 0, SRCCOPY);
+	SelectObject(hDoubleBufferDC, hOldDoubleBufferBitMap);
+	DeleteDC(hDoubleBufferDC);
 }
 
 void DeleteBitmap()
@@ -137,6 +169,84 @@ void UpdateFrame(HWND hWnd)
 VOID CALLBACK AniProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	UpdateFrame(hWnd);
+	InvalidateRect(hWnd, nullptr, FALSE);
+}
 
-	InvalidateRect(hWnd, nullptr, false);
+VOID CALLBACK KeyStateProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
+	if (GetKeyState('W') & 0x8000)
+	{
+		wsprintf(sKeyState, TEXT("%s"), _T("W-key pressed"));
+	}
+	else if (GetKeyState('A') & 0x8000)
+	{
+		wsprintf(sKeyState, TEXT("%s"), _T("A-key pressed"));
+	}
+	else if (GetKeyState('S') & 0x8000)
+	{
+		wsprintf(sKeyState, TEXT("%s"), _T("S-key pressed"));
+	}
+	else if(GetKeyState('D') & 0x8000)
+	{
+		wsprintf(sKeyState, TEXT("%s"), _T("D-key pressed"));
+	}
+}
+
+BOOL CALLBACK Dialog1_Proc(HWND hDlg, UINT uMsg, WPARAM wParam, DWORD dwTime)
+{
+	switch (uMsg)
+	{
+	case WM_INITDIALOG:
+		return TRUE;
+		break;
+	
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+			EndDialog(hDlg, 0);
+			break;
+
+		case IDCANCEL:
+
+			break;
+
+		default:
+			break;
+		}
+
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Update()
+{
+	DWORD newTime{ GetTickCount() };
+	static DWORD oldTime{ newTime };
+
+	if (newTime - oldTime < 100)
+		return;
+
+	// 보간?
+	oldTime = newTime - (newTime - oldTime) % 100;
+
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	{
+		ptAni.x -= 10;
+	}
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	{
+		ptAni.x += 10;
+	}
+	else if (GetAsyncKeyState(VK_UP) & 0x8000)
+	{
+		ptAni.y -= 10;
+	}
+	else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	{
+		ptAni.y += 10;
+	}
 }

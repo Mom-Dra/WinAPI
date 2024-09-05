@@ -10,6 +10,7 @@ private:
 	float height;
 
 public:
+	explicit inline constexpr Block();
 	explicit inline constexpr Block(const Vector2& center, float width, float height);
 
 	inline constexpr float GetLeft() const;
@@ -17,10 +18,15 @@ public:
 	inline constexpr float GetTop() const;
 	inline constexpr float GetBottom() const;
 
-	inline constexpr void Init() override;
-	inline void Draw(const HDC& hdc) const override;
+	inline constexpr void Init() noexcept override;
+	inline void Draw(const HDC& hdc) const noexcept override;
 	inline constexpr void Update(const float deltaTime) override;
 };
+
+inline constexpr Block::Block() : Block{ Vector2::Zero, 0.0f, 0.0f }
+{
+
+}
 
 inline constexpr Block::Block(const Vector2& center, float width, float height) : Object{ center }, width{ width }, height{ height }
 {
@@ -29,30 +35,30 @@ inline constexpr Block::Block(const Vector2& center, float width, float height) 
 
 inline constexpr float Block::GetLeft() const
 {
-	return GetCenter().x - width / 2;
+	return GetCenter().x - width / 2.0f;
 }
 
 inline constexpr float Block::GetRight() const
 {
-	return GetCenter().x + width / 2;
+	return GetCenter().x + width / 2.0f;
 }
 
 inline constexpr float Block::GetTop() const
 {
-	return GetCenter().y - height / 2;
+	return GetCenter().y - height / 2.0f;
 }
 
 inline constexpr float Block::GetBottom() const
 {
-	return GetCenter().y + height / 2;
+	return GetCenter().y + height / 2.0f;
 }
 
-inline constexpr void Block::Init()
+inline constexpr void Block::Init() noexcept
 {
 
 }
 
-inline void Block::Draw(const HDC& hdc) const
+inline void Block::Draw(const HDC& hdc) const noexcept
 { 
 	Rectangle(hdc, GetLeft(), GetTop(), GetRight(), GetBottom());
 }
