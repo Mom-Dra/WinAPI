@@ -166,6 +166,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
         case TIMER_UPDATE:
             gameManager.Update(GameManager::DELTATIME);
+            gameManager.CheckCollision();
             InvalidateRect(hWnd, NULL, TRUE);
             break;
         }

@@ -16,15 +16,16 @@ private:
 	const float paddingX{ block_Width };
 	const float paddingY{ block_Height * 2 };
 	
-	const float ballCount{ 1.0f };
-	const float radius{ 5.0f };
+	const int numOfBall{ 1 };
+	const float radiusOfBall{ 5.0f };
+	const float speedOfBall{ 200.0f };
 
 public:
 	inline constexpr explicit DefaultGameStrategy() = default;
-	inline constexpr void CreateGame(std::vector<Block>& blocks, std::vector<Ball>& balls, Block& wall) const noexcept override;
+	inline void CreateGame(std::list<Block>& blocks, std::vector<Ball>& balls, Block& wall) const noexcept override;
 };
 
-inline constexpr void DefaultGameStrategy::CreateGame(std::vector<Block>& blocks, std::vector<Ball>& balls, Block& wall) const noexcept
+inline void DefaultGameStrategy::CreateGame(std::list<Block>& blocks, std::vector<Ball>& balls, Block& wall) const noexcept
 {
 	// 블럭 갯수 맞춰주기
 	int numOfBlock{ numOfWidthBlock * numOfHeightBlock };
@@ -32,7 +33,6 @@ inline constexpr void DefaultGameStrategy::CreateGame(std::vector<Block>& blocks
 	if (blocks.size() < numOfBlock)
 	{
 		int extraBlock{ numOfBlock - static_cast<int>(blocks.size()) };
-		blocks.reserve(numOfBlock);
 
 		for (int i{ 0 }; i < extraBlock; ++i)
 		{
@@ -46,10 +46,11 @@ inline constexpr void DefaultGameStrategy::CreateGame(std::vector<Block>& blocks
 
 	// 블럭 포지션 설정
 	Vector2 pos{ block_Width / 2 + paddingX, block_Height / 2 + paddingY };
+	auto it = blocks.begin();
 
-	for (int i{ 0 }; i < numOfBlock; ++i)
+	for (int i{ 0 }; i < numOfBlock; ++i, ++it)
 	{
-		blocks[i].SetCenter(pos);
+		it->SetCenter(pos);
 
 		pos.x += block_Width;
 
@@ -61,12 +62,12 @@ inline constexpr void DefaultGameStrategy::CreateGame(std::vector<Block>& blocks
 	}
 
 	// ball 설정
-	if (balls.size() < ballCount)
+	if (balls.size() < numOfBall)
 	{
-		balls.emplace_back(Vector2{ static_cast<float>(GameManager::WIDTH / 2.0f), static_cast<float>(GameManager::HEIGHT) }, radius);
+		balls.emplace_back(Vector2{ static_cast<float>(GameManager::WIDTH / 2.3f), static_cast<float>(GameManager::HEIGHT - 50) }, radiusOfBall, speedOfBall);
 	}
 	else
 	{
-		balls.resize(ballCount);
+		balls.resize(numOfBall);
 	}
 }

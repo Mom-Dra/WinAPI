@@ -2,28 +2,34 @@
 #include "Object.h"
 #include "Vector2.h"
 #include "Matrix3x3.h"
+#include "Block.h"
+#include <cmath>
+#include <algorithm>
 
 class Ball : public Object
 {
 private:
 	float radius;
 	Vector2 moveDir;
+	float speed;
 	Matrix3x3 transformMatrix;
 
 public:
 	explicit inline constexpr Ball();
-	explicit inline constexpr Ball(const Vector2& center, float radius);
+	explicit inline constexpr Ball(const Vector2& center, float radius, float speed);
 
 	inline constexpr void Init() noexcept override;
 	inline void Draw(const HDC& hdc) const noexcept override;
 	inline constexpr void Update(const float deltaTime) override;
+	bool CheckCollisionWithBlock(const Block& block) noexcept;
+	bool CheckCollisionWithWall(const int width, const int height) noexcept;
 };
 
-inline constexpr Ball::Ball() : Ball{ Vector2::Zero, 1.0f }
+inline constexpr Ball::Ball() : Ball{ Vector2::Zero, 1.0f , 10.0f }
 {
 }
 
-inline constexpr Ball::Ball(const Vector2& center, float radius) : Object{ center }, radius{ radius }, moveDir{ -Vector2::UnitY }
+inline constexpr Ball::Ball(const Vector2& center, float radius, float speed) : Object{ center }, radius{ radius }, moveDir{ -Vector2::UnitY }, speed{ speed }
 {
 
 }
@@ -42,7 +48,6 @@ inline void Ball::Draw(const HDC& hdc) const noexcept
 
 inline constexpr void Ball::Update(const float deltaTime)
 {
-	transformMatrix.SetTranslation(moveDir);
-
+	transformMatrix.SetTranslation(moveDir * speed * deltaTime);
 	SetCenter(transformMatrix * GetCenter());
 }

@@ -5,12 +5,13 @@
 #include "framework.h"
 #include "IGameStrategy.h"
 #include <vector>
+#include <list>
 #include <memory>
 
 class GameManager
 {
 private:
-	std::vector<Block> blocks;
+	std::list<Block> blocks;
 	std::vector<Ball> balls;
 	std::unique_ptr<IGameStrategy> strategy;
 
@@ -24,31 +25,18 @@ public:
 
 public:
 	inline explicit GameManager(IGameStrategy* gameStrategy);
-	inline constexpr void InitGame() noexcept;
+	inline void InitGame() noexcept;
 	inline constexpr void CreateGame() noexcept;
 
 	inline void SetStrategy(IGameStrategy* newStrategy);
-	inline constexpr void Update(const float deltaTime);
-	inline constexpr void Draw(const HDC& hdc) const noexcept;
-	inline constexpr void CheckCollision() const noexcept;
+	inline void Update(const float deltaTime);
+	inline void Draw(const HDC& hdc) const noexcept;
+	inline constexpr void CheckCollision() noexcept;
 };
 
 inline GameManager::GameManager(IGameStrategy* gameStrategy) : strategy{ gameStrategy }
 {
 	CreateGame();
-}
-
-inline constexpr void GameManager::InitGame() noexcept
-{
-	for (Block& block : blocks)
-	{
-		block.Init();
-	}
-
-	for (Ball& ball : balls)
-	{
-		ball.Init();
-	}
 }
 
 inline constexpr void GameManager::CreateGame() noexcept
@@ -62,20 +50,7 @@ inline void GameManager::SetStrategy(IGameStrategy* newStrategy)
 	strategy = std::move(tmp);
 }
 
-inline constexpr void GameManager::Update(const float deltaTime)
-{
-	for (Block& block : blocks)
-	{
-		block.Update(deltaTime);
-	}
-
-	for (Ball& ball : balls)
-	{
-		ball.Update(deltaTime);
-	}
-}
-
-inline constexpr void GameManager::Draw(const HDC& hdc) const noexcept
+inline void GameManager::Draw(const HDC& hdc) const noexcept
 {
 	for (const Block& block : blocks)
 	{
@@ -88,12 +63,59 @@ inline constexpr void GameManager::Draw(const HDC& hdc) const noexcept
 	}
 }
 
-inline constexpr void GameManager::CheckCollision() const noexcept
+inline constexpr void GameManager::CheckCollision() noexcept
 {
 	// 공이 블럭과 충돌하면 튀겨야 한다!!
 
 	// Code!!
 
+	// 8개의 공간으로 나누어야 한다!!!
+	// 8개의 사분면으로 나누자!
 
+	bool collision{ false };
 
+	for (Ball& ball : balls)
+	{
+		for (std::list<Block>::iterator it{ blocks.begin() }; it != blocks.end(); ++it)
+		{
+			collision = ball.CheckCollisionWithBlock(*it);
+
+			if (collision)
+			{
+				blocks.erase(it);
+
+				break;
+			}
+		}
+
+		if (collision) break;
+
+		ball.CheckCollisionWithWall(WIDTH, HEIGHT);
+	}
+}
+
+inline void GameManager::InitGame() noexcept
+{
+	for (Block& block : blocks)
+	{
+		block.Init();
+	}
+
+	for (Ball& ball : balls)
+	{
+		ball.Init();
+	}
+}
+
+inline void GameManager::Update(const float deltaTime)
+{
+	for (Block& block : blocks)
+	{
+		block.Update(deltaTime);
+	}
+
+	for (Ball& ball : balls)
+	{
+		ball.Update(deltaTime);
+	}
 }
