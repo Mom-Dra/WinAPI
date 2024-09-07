@@ -3,6 +3,7 @@
 #include "Vector2.h"
 #include "Matrix3x3.h"
 #include "Block.h"
+#include "MoveableBlock.h"
 #include <cmath>
 #include <algorithm>
 
@@ -22,6 +23,7 @@ public:
 	inline void Draw(const HDC& hdc) const noexcept override;
 	inline constexpr void Update(const float deltaTime) override;
 	bool CheckCollisionWithBlock(const Block& block) noexcept;
+	bool CheckCollisionWithMoveableBlock(const MoveableBlock& block) noexcept;
 	bool CheckCollisionWithWall(const int width, const int height) noexcept;
 };
 

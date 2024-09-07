@@ -20,12 +20,16 @@ private:
 	const float radiusOfBall{ 5.0f };
 	const float speedOfBall{ 200.0f };
 
+	const Vector2 moveableBlockCenter{ static_cast<float>(GameManager::WIDTH / 2.0f), static_cast<float>(GameManager::HEIGHT - 100) };
+	const float moveableBlockWidth{ block_Width * 2 };
+	const float moveableBlockHeight{ block_Height };
+
 public:
 	inline constexpr explicit DefaultGameStrategy() = default;
-	inline void CreateGame(std::list<Block>& blocks, std::vector<Ball>& balls, Block& wall) const noexcept override;
+	inline void CreateGame(std::list<Block>& blocks, std::vector<Ball>& balls, Block& moveableBlock) const noexcept override;
 };
 
-inline void DefaultGameStrategy::CreateGame(std::list<Block>& blocks, std::vector<Ball>& balls, Block& wall) const noexcept
+inline void DefaultGameStrategy::CreateGame(std::list<Block>& blocks, std::vector<Ball>& balls, Block& moveableBlock) const noexcept
 {
 	// ºí·° °¹¼ö ¸ÂÃçÁÖ±â
 	int numOfBlock{ numOfWidthBlock * numOfHeightBlock };
@@ -64,10 +68,14 @@ inline void DefaultGameStrategy::CreateGame(std::list<Block>& blocks, std::vecto
 	// ball ¼³Á¤
 	if (balls.size() < numOfBall)
 	{
-		balls.emplace_back(Vector2{ static_cast<float>(GameManager::WIDTH / 2.3f), static_cast<float>(GameManager::HEIGHT - 50) }, radiusOfBall, speedOfBall);
+		balls.emplace_back(moveableBlockCenter - Vector2::UnitY * 20.0f, radiusOfBall, speedOfBall);
 	}
 	else
 	{
 		balls.resize(numOfBall);
 	}
+
+	moveableBlock.SetCenter(moveableBlockCenter);
+	moveableBlock.SetWidth(moveableBlockWidth);
+	moveableBlock.SetHeight(moveableBlockHeight);
 }

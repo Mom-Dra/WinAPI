@@ -136,6 +136,7 @@
     <ClInclude Include="IGameStrategy.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="Matrix3x3.h" />
+    <ClInclude Include="MoveableBlock.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -151,6 +152,7 @@
     <ClCompile Include="IGameStrategy.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="Matrix3x3.cpp" />
+    <ClCompile Include="MoveableBlock.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />

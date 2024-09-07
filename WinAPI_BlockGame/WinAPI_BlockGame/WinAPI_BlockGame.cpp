@@ -167,9 +167,39 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case TIMER_UPDATE:
             gameManager.Update(GameManager::DELTATIME);
             gameManager.CheckCollision();
+
             InvalidateRect(hWnd, NULL, TRUE);
             break;
         }
+        break;
+
+    case WM_KEYDOWN:
+        switch (wParam)
+        {
+        case VK_LEFT:
+            gameManager.KeyDown(GameManager::KEY::LEFT);
+            break;
+
+        case VK_RIGHT:
+            gameManager.KeyDown(GameManager::KEY::RIGHT);
+            break;
+
+        default:
+            break;
+        }
+        break;
+
+    case WM_KEYUP:
+        switch (wParam)
+        {
+        case VK_LEFT: case VK_RIGHT:
+            gameManager.KeyDown(GameManager::KEY::NONE);
+            break;
+
+        default:
+            break;
+        }
+        break;
         break;
 
     case WM_DESTROY:

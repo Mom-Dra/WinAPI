@@ -10,7 +10,7 @@ private:
 public:
 	inline constexpr explicit Object(const Vector2& center);
 
-	inline constexpr Vector2 GetCenter() const noexcept;
+	inline constexpr const Vector2& GetCenter() const noexcept;
 	inline constexpr void SetCenter(const Vector2& center) noexcept;
 
 	inline constexpr virtual void Init() noexcept = 0;
@@ -25,7 +25,7 @@ inline constexpr Object::Object(const Vector2& center) : center{ center }
 
 }
 
-inline constexpr Vector2 Object::GetCenter() const noexcept
+inline constexpr const Vector2& Object::GetCenter() const noexcept
 {
 	return center;
 }

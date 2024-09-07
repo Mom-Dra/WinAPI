@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 #include "Block.h"
+#include "MoveableBlock.h"
 #include "Ball.h"
 #include "framework.h"
 #include "IGameStrategy.h"
@@ -15,13 +16,22 @@ private:
 	std::vector<Ball> balls;
 	std::unique_ptr<IGameStrategy> strategy;
 
-	Block block;
+	MoveableBlock moveAbleBlock;
 
 public:
 	static inline constexpr int FPS{ 60 };
 	static inline constexpr float DELTATIME{ 1.0f / static_cast<float>(FPS) };
 	static inline constexpr int WIDTH{ 700 };
 	static inline constexpr int HEIGHT{ 700 };
+	static inline constexpr float BLOCKSPEED{ 100 };
+	static inline constexpr float MOVEABLEBLOCKSPEED{ 50.0f };
+
+	enum class KEY
+	{
+		NONE,
+		LEFT,
+		RIGHT
+	};
 
 public:
 	inline explicit GameManager(IGameStrategy* gameStrategy);
@@ -32,6 +42,8 @@ public:
 	inline void Update(const float deltaTime);
 	inline void Draw(const HDC& hdc) const noexcept;
 	inline constexpr void CheckCollision() noexcept;
+
+	inline constexpr void KeyDown(KEY key);
 };
 
 inline GameManager::GameManager(IGameStrategy* gameStrategy) : strategy{ gameStrategy }
@@ -41,7 +53,7 @@ inline GameManager::GameManager(IGameStrategy* gameStrategy) : strategy{ gameStr
 
 inline constexpr void GameManager::CreateGame() noexcept
 {
-	strategy->CreateGame(blocks, balls, block);
+	strategy->CreateGame(blocks, balls, moveAbleBlock);
 }
 
 inline void GameManager::SetStrategy(IGameStrategy* newStrategy)
@@ -61,6 +73,8 @@ inline void GameManager::Draw(const HDC& hdc) const noexcept
 	{
 		ball.Draw(hdc);
 	}
+
+	moveAbleBlock.Draw(hdc);
 }
 
 inline constexpr void GameManager::CheckCollision() noexcept
@@ -71,7 +85,6 @@ inline constexpr void GameManager::CheckCollision() noexcept
 
 	// 8개의 공간으로 나누어야 한다!!!
 	// 8개의 사분면으로 나누자!
-
 	bool collision{ false };
 
 	for (Ball& ball : balls)
@@ -83,14 +96,35 @@ inline constexpr void GameManager::CheckCollision() noexcept
 			if (collision)
 			{
 				blocks.erase(it);
-
 				break;
 			}
 		}
 
 		if (collision) break;
 
-		ball.CheckCollisionWithWall(WIDTH, HEIGHT);
+		collision = ball.CheckCollisionWithWall(WIDTH, HEIGHT);
+
+		if (collision) break;
+
+		ball.CheckCollisionWithMoveableBlock(moveAbleBlock);
+	}
+}
+
+inline constexpr void GameManager::KeyDown(KEY key)
+{
+	switch (key)
+	{
+	case KEY::NONE:
+		moveAbleBlock.SetMoveDir(Vector2::Zero);
+		break;
+	case KEY::LEFT:
+		moveAbleBlock.SetMoveDir(-Vector2::UnitX);
+		break;
+	case KEY::RIGHT:
+		moveAbleBlock.SetMoveDir(Vector2::UnitX);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -118,4 +152,6 @@ inline void GameManager::Update(const float deltaTime)
 	{
 		ball.Update(deltaTime);
 	}
+
+	moveAbleBlock.Update(deltaTime);
 }
