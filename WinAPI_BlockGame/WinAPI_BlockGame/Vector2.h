@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <algorithm>
 
 class Vector2
 {
@@ -24,6 +25,8 @@ public:
 	inline Vector2 Normalize() const;
 	inline float Magnitude() const;
 	inline constexpr float Dot(const Vector2& other) const;
+	
+	static inline Vector2 Lerp(const Vector2& a, const Vector2& b, float t);
 };
 
 inline constexpr Vector2::Vector2() noexcept : Vector2{ 0.0f, 0.0f }
@@ -83,4 +86,10 @@ inline float Vector2::Magnitude() const
 inline constexpr float Vector2::Dot(const Vector2& other) const
 {
 	return x * other.x + y * other.y;
+}
+
+inline Vector2 Vector2::Lerp(const Vector2& a, const Vector2& b, float t)
+{
+	t = std::clamp(t, 0.0f, 1.0f);
+	return Vector2{ a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t };
 }

@@ -15,6 +15,9 @@ private:
 	float speed;
 	Matrix3x3 transformMatrix;
 
+private:
+	inline constexpr void SetMoveDir(const Vector2& moveDir) noexcept;
+
 public:
 	explicit inline constexpr Ball();
 	explicit inline constexpr Ball(const Vector2& center, float radius, float speed);
@@ -26,6 +29,11 @@ public:
 	bool CheckCollisionWithMoveableBlock(const MoveableBlock& block) noexcept;
 	bool CheckCollisionWithWall(const int width, const int height) noexcept;
 };
+
+inline constexpr void Ball::SetMoveDir(const Vector2& moveDir) noexcept
+{
+	this->moveDir = moveDir;
+}
 
 inline constexpr Ball::Ball() : Ball{ Vector2::Zero, 1.0f , 10.0f }
 {

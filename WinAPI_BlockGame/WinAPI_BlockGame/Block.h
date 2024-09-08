@@ -13,8 +13,8 @@ public:
 	explicit inline constexpr Block();
 	explicit inline constexpr Block(const Vector2& center, float width, float height);
 
-	inline constexpr void SetWidth(float width);
-	inline constexpr void SetHeight(float height);
+	inline constexpr void SetWidth(float width) noexcept;
+	inline constexpr void SetHeight(float height) noexcept;
 
 	inline constexpr float GetLeft() const;
 	inline constexpr float GetRight() const;
@@ -24,6 +24,9 @@ public:
 	inline constexpr void Init() noexcept override;
 	inline void Draw(const HDC& hdc) const noexcept override;
 	inline constexpr void Update(const float deltaTime) override;
+
+	inline constexpr float GetWidth() const noexcept;
+	inline constexpr float GetHeight() const noexcept;
 };
 
 inline constexpr Block::Block() : Block{ Vector2::Zero, 0.0f, 0.0f }
@@ -36,12 +39,12 @@ inline constexpr Block::Block(const Vector2& center, float width, float height) 
 
 }
 
-inline constexpr void Block::SetWidth(float width)
+inline constexpr void Block::SetWidth(float width) noexcept
 {
 	this->width = width;
 }
 
-inline constexpr void Block::SetHeight(float height)
+inline constexpr void Block::SetHeight(float height) noexcept
 {
 	this->height = height;
 }
@@ -79,4 +82,14 @@ inline void Block::Draw(const HDC& hdc) const noexcept
 inline constexpr void Block::Update(const float deltaTime)
 {
 
+}
+
+inline constexpr float Block::GetWidth() const noexcept
+{
+	return width;
+}
+
+inline constexpr float Block::GetHeight() const noexcept
+{
+	return height;
 }

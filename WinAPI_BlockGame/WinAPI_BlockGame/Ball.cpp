@@ -1,4 +1,6 @@
 #include "Ball.h"
+#include <numbers>
+#include <cmath>
 
 bool Ball::CheckCollisionWithBlock(const Block& block) noexcept
 {
@@ -11,41 +13,43 @@ bool Ball::CheckCollisionWithBlock(const Block& block) noexcept
 	float bottom{ block.GetBottom() };
 
 	float closestX{ std::clamp(center.x, left, right) };
-	float closestY{ std::clamp(center.x, top, bottom) };
+	float closestY{ std::clamp(center.y, top, bottom) };
 
 	Vector2 closestPoint{ closestX, closestY };
 	Vector2 distance{ center - closestPoint };
 
-	bool isCorner{ center.x  < left || center.x > right };
-
 	// 블럭 충돌 처리
-	if (distance.Magnitude() < radius)
+	if (distance.Magnitude() <= radius)
 	{
 		// 여기서 8개의 사분면으로 나누자!
 		if (center.y <= top)
 		{
-			if (isCorner)
-			{
-				moveDir = -moveDir;
-			}
-			else
-			{
-				// 반사 공식!
-				// R = P + 2 x (-P dot n) x n
-				moveDir = moveDir + (-Vector2::UnitY) * (2 * moveDir.Dot(Vector2::UnitY));
-			}
+			//if (isCorner)
+			//{
+			//	SetMoveDir(-moveDir);
+			//}
+			//else
+			//{
+			//	// 반사 공식!
+			//	// R = P + 2 x (-P dot n) x n
+			//	SetMoveDir(moveDir + (-Vector2::UnitY) * (2 * moveDir.Dot(Vector2::UnitY)));
+			//}
+
+			SetMoveDir(moveDir + (-Vector2::UnitY) * (2 * moveDir.Dot(Vector2::UnitY)));
 		}
 		else if (center.y >= bottom)
 		{
-			if (isCorner)
-			{
-				moveDir = -moveDir;
-			}
-			else
-			{
-				// 반사 공식
-				moveDir = moveDir + Vector2::UnitY * (2 * -moveDir.Dot(Vector2::UnitY));
-			}
+			//if (isCorner)
+			//{
+			//	SetMoveDir(-moveDir);
+			//}
+			//else
+			//{
+			//	// 반사 공식
+			//	SetMoveDir(moveDir + Vector2::UnitY * (2 * moveDir.Dot(-Vector2::UnitY)));
+			//}
+
+			SetMoveDir(moveDir + Vector2::UnitY * (2 * moveDir.Dot(-Vector2::UnitY)));
 		}
 		else
 		{
@@ -54,11 +58,11 @@ bool Ball::CheckCollisionWithBlock(const Block& block) noexcept
 
 			if (center.x >= right)
 			{
-				moveDir = moveDir + Vector2::UnitX * (2 * moveDir.Dot(Vector2::UnitX));
+				SetMoveDir(moveDir + Vector2::UnitX * (2 * moveDir.Dot(-Vector2::UnitX)));
 			}
 			else if (center.x <= left)
 			{
-				moveDir = moveDir + (-Vector2::UnitX) * (2 * moveDir.Dot(-Vector2::UnitX));
+				SetMoveDir(moveDir + (-Vector2::UnitX) * (2 * moveDir.Dot(Vector2::UnitX)));
 			}
 		}
 
@@ -78,62 +82,25 @@ bool Ball::CheckCollisionWithMoveableBlock(const MoveableBlock& block) noexcept
 	float bottom{ block.GetBottom() };
 
 	float closestX{ std::clamp(center.x, left, right) };
-	float closestY{ std::clamp(center.x, top, bottom) };
+	float closestY{ std::clamp(center.y, top, bottom) };
+
+	float ratio{ (closestX - left) / (right - left) };
 
 	Vector2 closestPoint{ closestX, closestY };
 	Vector2 distance{ center - closestPoint };
 
-	bool isCorner{ center.x  < left || center.x > right };
-
+	
 	// 블럭 충돌 처리
 	if (distance.Magnitude() < radius)
 	{
-		// 여기서 8개의 사분면으로 나누자!
-		if (center.y <= top)
-		{
-			if (isCorner)
-			{
-				moveDir = -moveDir;
-			}
-			else
-			{
-				// 반사 공식!
-				// R = P + 2 x (-P dot n) x n
-				moveDir = moveDir + (-Vector2::UnitY) * (2 * moveDir.Dot(Vector2::UnitY));
-			}
-		}
-		else if (center.y >= bottom)
-		{
-			if (isCorner)
-			{
-				moveDir = -moveDir;
-			}
-			else
-			{
-				// 반사 공식
-				moveDir = moveDir + Vector2::UnitY * (2 * -moveDir.Dot(Vector2::UnitY));
-			}
-		}
-		else
-		{
-			// 사이에 낀 경우, 반사 공식
-			// R = P + 2 x (-P dot n) x n
+		static constexpr float degreeToRadian{ std::numbers::pi_v<float> / 180.0f };
+		Vector2 rightVector{ std::cosf(-15 * degreeToRadian), std::sinf(-15 * degreeToRadian) };
+		Vector2 leftVector{ std::cosf((-180 + 15) * degreeToRadian), std::sinf((-180 + 15) * degreeToRadian) };
 
-			if (center.x >= right)
-			{
-				moveDir = moveDir + Vector2::UnitX * (2 * moveDir.Dot(Vector2::UnitX));
-			}
-			else if (center.x <= left)
-			{
-				moveDir = moveDir + (-Vector2::UnitX) * (2 * moveDir.Dot(-Vector2::UnitX));
-			}
-		}
+		SetMoveDir(Vector2::Lerp(leftVector, rightVector, ratio).Normalize());
 
 		return true;
 	}
-
-	return false;
-
 
 	return false;
 }
@@ -146,24 +113,24 @@ bool Ball::CheckCollisionWithWall(const int width, const int height) noexcept
 	// R = P + 2 x (-P dot n) x n
 	if (center.x - radius <= 0.0f)
 	{
-		moveDir = moveDir + Vector2::UnitX * (2 * moveDir.Dot(Vector2::UnitX));
+		SetMoveDir(moveDir + Vector2::UnitX * (2 * moveDir.Dot(-Vector2::UnitX)));
 		return true;
 	}
 	else if (center.x + radius >= width)
 	{
-		moveDir = moveDir + (-Vector2::UnitX) * (2 * moveDir.Dot(Vector2::UnitX));
+		SetMoveDir(moveDir + (-Vector2::UnitX) * (2 * moveDir.Dot(Vector2::UnitX)));
 
 		return true;
 	}
 	else if (center.y - radius <= 0.0f)
 	{
-		moveDir = moveDir + (Vector2::UnitY) * (2 * moveDir.Dot(-Vector2::UnitY));
+		SetMoveDir(moveDir + (Vector2::UnitY) * (2 * moveDir.Dot(-Vector2::UnitY)));
 
 		return true;
 	}
 	else if (center.y + radius >= height)
 	{
-		moveDir = moveDir + (-Vector2::UnitY) * (2 * moveDir.Dot(Vector2::UnitY));
+		SetMoveDir(moveDir + (-Vector2::UnitY) * (2 * moveDir.Dot(Vector2::UnitY)));
 
 		return true;
 	}

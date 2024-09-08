@@ -14,6 +14,7 @@ class GameManager
 private:
 	std::list<Block> blocks;
 	std::vector<Ball> balls;
+	std::list<Ball> items;
 	std::unique_ptr<IGameStrategy> strategy;
 
 	MoveableBlock moveAbleBlock;
@@ -23,8 +24,7 @@ public:
 	static inline constexpr float DELTATIME{ 1.0f / static_cast<float>(FPS) };
 	static inline constexpr int WIDTH{ 700 };
 	static inline constexpr int HEIGHT{ 700 };
-	static inline constexpr float BLOCKSPEED{ 100 };
-	static inline constexpr float MOVEABLEBLOCKSPEED{ 50.0f };
+	static inline constexpr float MOVEABLEBLOCKSPEED{ 600.0f };
 
 	enum class KEY
 	{
@@ -42,6 +42,8 @@ public:
 	inline void Update(const float deltaTime);
 	inline void Draw(const HDC& hdc) const noexcept;
 	inline constexpr void CheckCollision() noexcept;
+
+	inline constexpr void GenerateItem() noexcept;
 
 	inline constexpr void KeyDown(KEY key);
 };
@@ -96,6 +98,7 @@ inline constexpr void GameManager::CheckCollision() noexcept
 			if (collision)
 			{
 				blocks.erase(it);
+
 				break;
 			}
 		}
@@ -108,6 +111,29 @@ inline constexpr void GameManager::CheckCollision() noexcept
 
 		ball.CheckCollisionWithMoveableBlock(moveAbleBlock);
 	}
+
+	// Item 충돌 판정
+	// Item 생성 -> Item 충돌 -> Item이 블럭에 충돌 -> Item 효과 발동
+	// Item이 바닥에 충돌 -> Item 삭제
+
+	collision = false;
+	for (std::list<Ball>::iterator it{ items.begin() }; it != items.end(); ++it)
+	{
+		// 여기서 블럭하고 아이템 충돌 Check
+		//collision = (*it)
+
+		if (collision)
+		{
+			GenerateItem();
+			it = items.erase(it);
+			--it;
+		}
+	}
+}
+
+inline constexpr void GameManager::GenerateItem() noexcept
+{
+
 }
 
 inline constexpr void GameManager::KeyDown(KEY key)
