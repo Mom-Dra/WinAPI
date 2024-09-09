@@ -39,7 +39,7 @@ void DefaultGameStrategy::CreateGame(std::list<Block>& blocks, std::vector<Ball>
 	// ball ¼³Á¤
 	if (balls.size() < numOfBall)
 	{
-		balls.emplace_back(moveableBlockCenter - Vector2::UnitY * 20.0f, radiusOfBall, speedOfBall);
+		balls.emplace_back(moveableBlockCenter - Vector2::UnitY * 20.0f, radiusOfBall, speedOfBall, -Vector2::UnitY);
 	}
 	else
 	{

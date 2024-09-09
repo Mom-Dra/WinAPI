@@ -4,6 +4,14 @@
 #include "framework.h"
 #include "WinAPI_bitMap.h"
 
+#include "commdlg.h"
+#include <cmath>
+#include <iostream>
+#include <vector>
+#include <list>
+
+
+
 #define MAX_LOADSTRING 100
 
 
@@ -53,6 +61,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     //    }
     //}
 
+    Gdi_Init();
+
     while (true)
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -75,6 +85,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             Update();
         }
     }
+
+    Gdi_End();
 
     return (int) msg.wParam;
 }
@@ -198,6 +210,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             //DrawBitMap(hWnd, hdc);
             DrawBitMapDoubleBuffering(hWnd, hdc);
 
+            
+
             //TextOut(hdc, 10, 10, sKeyState, _tc)
 
             EndPaint(hWnd, &ps);
@@ -243,3 +257,56 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
+
+
+//BOOL CALLBACK Dialog1_Proc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+//{
+//    static int Check[3];
+//
+//    switch (uMsg)
+//    {
+//    case WM_INITDIALOG:
+//    {
+//
+//    }
+//    break;
+//
+//    case WM_COMMAND:
+//        int wmId = LOWORD(wParam);
+//
+//        switch (wmId)
+//        {
+//        case IDC_READ:
+//            Check[0] = 1 - Check[0];
+//            break;
+//        case IDC_MUSIC:
+//            Check[1] = 1 - Check[1];
+//            break;
+//        case IDC_GAME:
+//            Check[2] = 1 - Check[2];
+//            break;
+//        case IDC_FEMALE:
+//            
+//            break;
+//        case IDC_MALE:
+//            break;
+//        case IDC_OUTPUT:
+//            /*_stprintf_s(output, _T("선택한 취미는 %s %s %S 입니다.\r\n")
+//                _T("선택한 성별은 %\s 입니다."),
+//                Check[0] ? hobby[0] : _T(""),
+//                Check[1] ? hobby[1] : _T(""),
+//                Check[2] ? hobby[2] : _T(""),
+//                sex[Radio]
+//            );*/
+//
+//            break;
+//        default:
+//            break;
+//        }
+//
+//        break;
+//
+//    default:
+//        break;
+//    }
+//}

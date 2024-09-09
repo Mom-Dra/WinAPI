@@ -8,6 +8,7 @@
 #include <vector>
 #include <list>
 #include <memory>
+#include <random>
 
 class GameManager
 {
@@ -20,11 +21,16 @@ private:
 	MoveableBlock moveAbleBlock;
 
 public:
-	static inline constexpr int FPS{ 60 };
+	static inline constexpr int FPS{ 120 };
 	static inline constexpr float DELTATIME{ 1.0f / static_cast<float>(FPS) };
 	static inline constexpr int WIDTH{ 700 };
 	static inline constexpr int HEIGHT{ 700 };
 	static inline constexpr float MOVEABLEBLOCKSPEED{ 600.0f };
+
+	// 0 ~ 9, 9가 100% 확률
+	static inline constexpr int ITEMDROPCHANCE{ 9 };
+	static inline constexpr float ITEMRADIUS{ 5.0f };
+	static inline constexpr float ITEMSPEED{ 50.0f };
 
 	enum class KEY
 	{
@@ -41,9 +47,9 @@ public:
 	inline void SetStrategy(IGameStrategy* newStrategy);
 	inline void Update(const float deltaTime);
 	inline void Draw(const HDC& hdc) const noexcept;
-	inline constexpr void CheckCollision() noexcept;
+	void CheckCollision() noexcept;
 
-	inline constexpr void GenerateItem() noexcept;
+	inline void GenerateItem(const Block& block) noexcept;
 
 	inline constexpr void KeyDown(KEY key);
 };
@@ -77,63 +83,27 @@ inline void GameManager::Draw(const HDC& hdc) const noexcept
 	}
 
 	moveAbleBlock.Draw(hdc);
-}
 
-inline constexpr void GameManager::CheckCollision() noexcept
-{
-	// 공이 블럭과 충돌하면 튀겨야 한다!!
-
-	// Code!!
-
-	// 8개의 공간으로 나누어야 한다!!!
-	// 8개의 사분면으로 나누자!
-	bool collision{ false };
-
-	for (Ball& ball : balls)
+	for (const Ball& item : items)
 	{
-		for (std::list<Block>::iterator it{ blocks.begin() }; it != blocks.end(); ++it)
-		{
-			collision = ball.CheckCollisionWithBlock(*it);
-
-			if (collision)
-			{
-				blocks.erase(it);
-
-				break;
-			}
-		}
-
-		if (collision) break;
-
-		collision = ball.CheckCollisionWithWall(WIDTH, HEIGHT);
-
-		if (collision) break;
-
-		ball.CheckCollisionWithMoveableBlock(moveAbleBlock);
-	}
-
-	// Item 충돌 판정
-	// Item 생성 -> Item 충돌 -> Item이 블럭에 충돌 -> Item 효과 발동
-	// Item이 바닥에 충돌 -> Item 삭제
-
-	collision = false;
-	for (std::list<Ball>::iterator it{ items.begin() }; it != items.end(); ++it)
-	{
-		// 여기서 블럭하고 아이템 충돌 Check
-		//collision = (*it)
-
-		if (collision)
-		{
-			GenerateItem();
-			it = items.erase(it);
-			--it;
-		}
+		item.Draw(hdc);
 	}
 }
 
-inline constexpr void GameManager::GenerateItem() noexcept
+inline void GameManager::GenerateItem(const Block& block) noexcept
 {
+	// center, radius, speed!
+	//items.emplace_back()
+	static std::random_device rd;
+	static std::default_random_engine g{ rd() };
+	static std::uniform_int_distribution i_dist{ 0, 9 };
 
+	// 0 1 2 3 4 5 6 7 8 9
+
+	if (i_dist(g) < ITEMDROPCHANCE)
+	{
+		items.emplace_back(block.GetCenter(), ITEMRADIUS, ITEMSPEED, Vector2::UnitY);
+	}
 }
 
 inline constexpr void GameManager::KeyDown(KEY key)
@@ -180,4 +150,9 @@ inline void GameManager::Update(const float deltaTime)
 	}
 
 	moveAbleBlock.Update(deltaTime);
+
+	for (Ball& item : items)
+	{
+		item.Update(deltaTime);
+	}
 }

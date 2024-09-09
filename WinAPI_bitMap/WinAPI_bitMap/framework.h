@@ -15,3 +15,11 @@
 #include <tchar.h>
 
 #pragma comment(lib, "msimg32.lib")
+
+#include <objidl.h>
+#include <gdiplus.h>
+#include "commdlg.h"
+#include <stdio.h>
+
+#pragma comment(lib, "Gdiplus.lib")
+using namespace Gdiplus;

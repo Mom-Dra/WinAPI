@@ -17,7 +17,7 @@ private:
 	const float paddingY{ block_Height * 2 };
 	
 	const int numOfBall{ 1 };
-	const float radiusOfBall{ 5.0f };
+	const float radiusOfBall{ 8.0f };
 	const float speedOfBall{ 600.0f };
 
 	const Vector2 moveableBlockCenter{ static_cast<float>(GameManager::WIDTH / 2.0f), static_cast<float>(GameManager::HEIGHT - 100) };

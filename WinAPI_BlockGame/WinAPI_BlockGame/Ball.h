@@ -20,7 +20,7 @@ private:
 
 public:
 	explicit inline constexpr Ball();
-	explicit inline constexpr Ball(const Vector2& center, float radius, float speed);
+	explicit inline constexpr Ball(const Vector2& center, float radius, float speed, const Vector2& moveDir);
 
 	inline constexpr void Init() noexcept override;
 	inline void Draw(const HDC& hdc) const noexcept override;
@@ -28,6 +28,9 @@ public:
 	bool CheckCollisionWithBlock(const Block& block) noexcept;
 	bool CheckCollisionWithMoveableBlock(const MoveableBlock& block) noexcept;
 	bool CheckCollisionWithWall(const int width, const int height) noexcept;
+
+	bool ReflectTheBallWithBlock(const Block& block) noexcept;
+	bool ReflectTheBallWithMoveableBlock(const MoveableBlock& block) noexcept;
 };
 
 inline constexpr void Ball::SetMoveDir(const Vector2& moveDir) noexcept
@@ -35,11 +38,12 @@ inline constexpr void Ball::SetMoveDir(const Vector2& moveDir) noexcept
 	this->moveDir = moveDir;
 }
 
-inline constexpr Ball::Ball() : Ball{ Vector2::Zero, 1.0f , 10.0f }
+inline constexpr Ball::Ball() : Ball{ Vector2::Zero, 1.0f , 10.0f, -Vector2::UnitY }
 {
+
 }
 
-inline constexpr Ball::Ball(const Vector2& center, float radius, float speed) : Object{ center }, radius{ radius }, moveDir{ -Vector2::UnitY }, speed{ speed }
+inline constexpr Ball::Ball(const Vector2& center, float radius, float speed, const Vector2& moveDir) : Object{ center }, radius{ radius }, moveDir{ moveDir }, speed{ speed }
 {
 
 }
