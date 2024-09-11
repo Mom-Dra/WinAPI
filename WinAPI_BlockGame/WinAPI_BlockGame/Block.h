@@ -81,7 +81,7 @@ inline void Block::Draw(const HDC& hdc) const noexcept
 
 inline constexpr void Block::Update(const float deltaTime)
 {
-
+	
 }
 
 inline constexpr float Block::GetWidth() const noexcept

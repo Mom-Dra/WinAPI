@@ -9,6 +9,7 @@
 #include <list>
 #include <memory>
 #include <random>
+#include "MyRandom.h"
 
 class GameManager
 {
@@ -20,8 +21,10 @@ private:
 
 	MoveableBlock moveAbleBlock;
 
+	bool isGameOver;
+
 public:
-	static inline constexpr int FPS{ 120 };
+	static inline constexpr int FPS{ 144 };
 	static inline constexpr float DELTATIME{ 1.0f / static_cast<float>(FPS) };
 	static inline constexpr int WIDTH{ 700 };
 	static inline constexpr int HEIGHT{ 700 };
@@ -31,6 +34,9 @@ public:
 	static inline constexpr int ITEMDROPCHANCE{ 9 };
 	static inline constexpr float ITEMRADIUS{ 5.0f };
 	static inline constexpr float ITEMSPEED{ 50.0f };
+
+	static inline constexpr float radiusOfBall{ 8.0f };
+	static inline constexpr float speedOfBall{ 600.0f };
 
 	enum class KEY
 	{
@@ -50,11 +56,18 @@ public:
 	void CheckCollision() noexcept;
 
 	inline void GenerateItem(const Block& block) noexcept;
-
 	inline constexpr void KeyDown(KEY key);
+	inline constexpr bool IsGameOver();
+
+	
+private:
+	inline constexpr void AddBall() noexcept;
+	inline void ApplyItem() noexcept;
+
+	inline constexpr void SetIsGameOver(bool isGameOver);
 };
 
-inline GameManager::GameManager(IGameStrategy* gameStrategy) : strategy{ gameStrategy }
+inline GameManager::GameManager(IGameStrategy* gameStrategy) : strategy{ gameStrategy }, isGameOver{ false }
 {
 	CreateGame();
 }
@@ -93,14 +106,9 @@ inline void GameManager::Draw(const HDC& hdc) const noexcept
 inline void GameManager::GenerateItem(const Block& block) noexcept
 {
 	// center, radius, speed!
-	//items.emplace_back()
-	static std::random_device rd;
-	static std::default_random_engine g{ rd() };
-	static std::uniform_int_distribution i_dist{ 0, 9 };
-
 	// 0 1 2 3 4 5 6 7 8 9
 
-	if (i_dist(g) < ITEMDROPCHANCE)
+	if (MyRandom::GetRandomInt(0, 9) < ITEMDROPCHANCE)
 	{
 		items.emplace_back(block.GetCenter(), ITEMRADIUS, ITEMSPEED, Vector2::UnitY);
 	}
@@ -122,6 +130,35 @@ inline constexpr void GameManager::KeyDown(KEY key)
 	default:
 		break;
 	}
+}
+
+inline constexpr bool GameManager::IsGameOver()
+{
+	return isGameOver;
+}
+
+inline constexpr void GameManager::AddBall() noexcept
+{
+	balls.emplace_back(Vector2(static_cast<float>(GameManager::WIDTH / 2.0f), static_cast<float>(GameManager::HEIGHT - 100)), radiusOfBall, speedOfBall, -Vector2::UnitY);
+}
+
+inline void GameManager::ApplyItem() noexcept
+{
+	switch (MyRandom::GetRandomInt(0, 0))
+	{
+	case 0:
+		AddBall();
+	case 1:
+
+		break;
+	default:
+		break;
+	}
+}
+
+inline constexpr void GameManager::SetIsGameOver(bool isGameOver)
+{
+	this->isGameOver = isGameOver;
 }
 
 inline void GameManager::InitGame() noexcept

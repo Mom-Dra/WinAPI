@@ -66,24 +66,25 @@ bool Ball::CheckCollisionWithWall(const int width, const int height) noexcept
 	if (center.x - radius <= 0.0f)
 	{
 		SetMoveDir(moveDir + Vector2::UnitX * (2 * moveDir.Dot(-Vector2::UnitX)));
+		SetCenter(center + Vector2::UnitX * 2);
 		return true;
 	}
 	else if (center.x + radius >= width)
 	{
 		SetMoveDir(moveDir + (-Vector2::UnitX) * (2 * moveDir.Dot(Vector2::UnitX)));
-
+		SetCenter(center - Vector2::UnitX * 2);
 		return true;
 	}
 	else if (center.y - radius <= 0.0f)
 	{
 		SetMoveDir(moveDir + (Vector2::UnitY) * (2 * moveDir.Dot(-Vector2::UnitY)));
-
+		SetCenter(center + Vector2::UnitY * 2);
 		return true;
 	}
 	else if (center.y + radius >= height)
 	{
 		SetMoveDir(moveDir + (-Vector2::UnitY) * (2 * moveDir.Dot(Vector2::UnitY)));
-
+		SetCenter(center - Vector2::UnitY * 2);
 		return true;
 	}
 
