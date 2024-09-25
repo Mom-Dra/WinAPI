@@ -41,107 +41,107 @@ TCHAR sKeyState[128];
 
 ULONG_PTR g_GdiPlusToken;
 
-void Gdi_Init()
-{
-	GdiplusStartupInput gpsi;
-
-	GdiplusStartup(&g_GdiPlusToken, &gpsi, NULL);
-}
-
-void Gdi_Draw(HDC hdc)
-{
-	Graphics graphics(hdc);
-
-	SolidBrush brush(Color(255, 255, 0, 0));
-	FontFamily fontFamily(L"Times New Roman");
-	Font font(&fontFamily, 24, FontStyleRegular, UnitPixel);
-
-	Point pointF(10.0f, 20.0f);
-	graphics.DrawString(L"Hello GDI+!", -1, &font, pointF, &brush);
-
-	Pen pen(Color(128, 0, 255, 255));
-	graphics.DrawLine(&pen, 0, 0, 200, 100);
-
-	Image img{ (WCHAR*)L"image/sigong.png" };
-
-	int w = img.GetWidth();
-	int h = img.GetHeight();
-	graphics.DrawImage(&img, 100, 100, w, h);
-
-	Image img2((WCHAR*)L"image/zero_run.png");
-	w = img2.GetWidth() / SPRITE_COUNT;
-	h = img2.GetHeight() / SPRITE_DIR;
-	
-	int xStart{ currFrame * w };
-	int yStart{ 0 };
-
-	ImageAttributes imgAttr0;
-	imgAttr0.SetColorKey(Color(245, 0, 245), Color(255, 10, 255));
-	graphics.DrawImage(&img2, Rect(200, 100, w, h), xStart, yStart, w, h, UnitPixel, &imgAttr0);
-
-	brush.SetColor(Color(128, 255, 0, 0));
-	graphics.FillRectangle(&brush, 100, 100, 200, 300);
-
-	Image* pImg = nullptr;
-	pImg = Image::FromFile((WCHAR*)L"image/sigong.png");
-	int xPos{ 300 };
-	int yPos{ 200 };
-
-	if (pImg)
-	{
-		w = pImg->GetWidth();
-		h = pImg->GetHeight();
-
-		Gdiplus::Matrix mat;
-		static int rot{ 0 };
-
-		mat.RotateAt(rot % 360,
-			Gdiplus::PointF(xPos + (float)(w / 2), yPos + (float)(h / 2)));
-
-		graphics.SetTransform(&mat);
-		graphics.DrawImage(pImg, xPos, yPos, w, h);
-		rot += 10;
-
-		mat.Reset();
-		graphics.SetTransform(&mat);
-	}
-
-	ImageAttributes imgAttr;
-	imgAttr.SetColorKey(Color(245, 0, 245), Color(255, 10, 255));
-	yPos = 200;
-
-	graphics.DrawImage(&img2, Rect(200, 100, w, h),
-		0, 0, w, h, UnitPixel, &imgAttr);
-
-	if (pImg)
-	{
-		REAL transparcy = 0.5f;
-
-		ColorMatrix colorMatrix =
-		{
-			1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, transparcy, 0.0f,
-			0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-		};
-		
-		imgAttr.SetColorMatrix(&colorMatrix);
-		xPos = 400;
-
-		graphics.DrawImage(pImg, Rect(xPos, yPos, w, h), 0, 0, w, h, UnitPixel, &imgAttr);
-
-		xPos = 600;
-		pImg->RotateFlip(RotateNoneFlipX);
-	}
-
-	if (pImg) delete pImg;
-}
-
-void Gdi_End()
-{
-	GdiplusShutdown(g_GdiPlusToken);
-}
+//void Gdi_Init()
+//{
+//	GdiplusStartupInput gpsi;
+//
+//	GdiplusStartup(&g_GdiPlusToken, &gpsi, NULL);
+//}
+//
+//void Gdi_Draw(HDC hdc)
+//{
+//	Graphics graphics(hdc);
+//
+//	SolidBrush brush(Color(255, 255, 0, 0));
+//	FontFamily fontFamily(L"Times New Roman");
+//	Font font(&fontFamily, 24, FontStyleRegular, UnitPixel);
+//
+//	Point pointF(10.0f, 20.0f);
+//	graphics.DrawString(L"Hello GDI+!", -1, &font, pointF, &brush);
+//
+//	Pen pen(Color(128, 0, 255, 255));
+//	graphics.DrawLine(&pen, 0, 0, 200, 100);
+//
+//	Image img{ (WCHAR*)L"image/sigong.png" };
+//
+//	int w = img.GetWidth();
+//	int h = img.GetHeight();
+//	graphics.DrawImage(&img, 100, 100, w, h);
+//
+//	Image img2((WCHAR*)L"image/zero_run.png");
+//	w = img2.GetWidth() / SPRITE_COUNT;
+//	h = img2.GetHeight() / SPRITE_DIR;
+//	
+//	int xStart{ currFrame * w };
+//	int yStart{ 0 };
+//
+//	ImageAttributes imgAttr0;
+//	imgAttr0.SetColorKey(Color(245, 0, 245), Color(255, 10, 255));
+//	graphics.DrawImage(&img2, Rect(200, 100, w, h), xStart, yStart, w, h, UnitPixel, &imgAttr0);
+//
+//	brush.SetColor(Color(128, 255, 0, 0));
+//	graphics.FillRectangle(&brush, 100, 100, 200, 300);
+//
+//	Image* pImg = nullptr;
+//	pImg = Image::FromFile((WCHAR*)L"image/sigong.png");
+//	int xPos{ 300 };
+//	int yPos{ 200 };
+//
+//	if (pImg)
+//	{
+//		w = pImg->GetWidth();
+//		h = pImg->GetHeight();
+//
+//		Gdiplus::Matrix mat;
+//		static int rot{ 0 };
+//
+//		mat.RotateAt(rot % 360,
+//			Gdiplus::PointF(xPos + (float)(w / 2), yPos + (float)(h / 2)));
+//
+//		graphics.SetTransform(&mat);
+//		graphics.DrawImage(pImg, xPos, yPos, w, h);
+//		rot += 10;
+//
+//		mat.Reset();
+//		graphics.SetTransform(&mat);
+//	}
+//
+//	ImageAttributes imgAttr;
+//	imgAttr.SetColorKey(Color(245, 0, 245), Color(255, 10, 255));
+//	yPos = 200;
+//
+//	graphics.DrawImage(&img2, Rect(200, 100, w, h),
+//		0, 0, w, h, UnitPixel, &imgAttr);
+//
+//	if (pImg)
+//	{
+//		REAL transparcy = 0.5f;
+//
+//		ColorMatrix colorMatrix =
+//		{
+//			1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+//			0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+//			0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+//			0.0f, 0.0f, 0.0f, transparcy, 0.0f,
+//			0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+//		};
+//		
+//		imgAttr.SetColorMatrix(&colorMatrix);
+//		xPos = 400;
+//
+//		graphics.DrawImage(pImg, Rect(xPos, yPos, w, h), 0, 0, w, h, UnitPixel, &imgAttr);
+//
+//		xPos = 600;
+//		pImg->RotateFlip(RotateNoneFlipX);
+//	}
+//
+//	if (pImg) delete pImg;
+//}
+//
+//void Gdi_End()
+//{
+//	GdiplusShutdown(g_GdiPlusToken);
+//}
 
 void CreateBitMap()
 {
@@ -255,7 +255,7 @@ void DrawBitMapDoubleBuffering(const HWND& hWnd, const HDC& hdc)
 	SelectObject(hDoubleBufferDC, hOldDoubleBufferBitMap);
 	DeleteDC(hDoubleBufferDC);
 
-	Gdi_Draw(hdc);
+	//Gdi_Draw(hdc);
 }
 
 void DeleteBitmap()
@@ -355,4 +355,51 @@ void Update()
 	{
 		ptAni.y += 10;
 	}
+}
+
+void FileRead(HWND hwnd, LPTSTR fileName)
+{
+	HANDLE hFile;
+	LPTSTR buffer;
+	DWORD size, CharNum;
+	int fileSize;
+	
+	hFile = CreateFile(fileName, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (hFile == INVALID_HANDLE_VALUE)
+		return;
+
+	fileSize = GetFileSize(hFile, &size);
+	buffer = new TCHAR[(int)fileSize / sizeof(TCHAR) + 1];
+	memset(buffer, 0, fileSize);
+	ReadFile(hFile, buffer, fileSize, &CharNum, NULL);
+	buffer[(int)fileSize / sizeof(TCHAR)] = NULL;
+	SetWindowText(hwnd, buffer);
+	delete[] buffer;
+	CloseHandle(hFile);
+}
+
+void FileSave(HWND hwnd, LPTSTR fileName)
+{
+	HANDLE hFile;
+	LPTSTR buffer;
+	int size;
+
+#ifdef _UNICODE
+	WORD uni = 0xFEFF;
+	DWORD nSize;
+#endif // _UNICODE
+	hFile = CreateFile(fileName, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+#ifdef _UNICODE
+	WriteFile(hFile, &uni, 2, &nSize, NULL);
+#endif // _UNICODE
+	size = GetWindowTextLength(hwnd);
+	buffer = new TCHAR[size + 1];
+	memset(buffer, 0, (size + 1) * sizeof(TCHAR));
+	size = GetWindowText(hwnd, (LPTSTR)buffer, size + 1);
+	buffer[size] = NULL;
+	WriteFile(hFile, buffer, size * sizeof(TCHAR), (LPDWORD)&size, NULL);
+	delete[] buffer;
+	CloseHandle(hFile);
 }

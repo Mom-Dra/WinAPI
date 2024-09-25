@@ -1,19 +1,10 @@
-﻿// WinAPI_bitMap.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+﻿// WinAPI_GalsPanic.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 
 #include "framework.h"
-#include "WinAPI_bitMap.h"
-
-#include "commdlg.h"
-#include <cmath>
-#include <iostream>
-#include <vector>
-#include <list>
-
-
+#include "WinAPI_GalsPanic.h"
 
 #define MAX_LOADSTRING 100
-
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -38,7 +29,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_WINAPIBITMAP, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_WINAPIGALSPANIC, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // 애플리케이션 초기화를 수행합니다:
@@ -47,46 +38,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINAPIBITMAP));
+    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINAPIGALSPANIC));
 
     MSG msg;
 
     // 기본 메시지 루프입니다:
-    //while (GetMessage(&msg, nullptr, 0, 0))
-    //{
-    //    if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-    //    {
-    //        TranslateMessage(&msg);
-    //        DispatchMessage(&msg);
-    //    }
-    //}
-
-    //Gdi_Init();
-
-    while (true)
+    while (GetMessage(&msg, nullptr, 0, 0))
     {
-        if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
         {
-            if (msg.message == WM_QUIT)
-            {
-                break;
-            }
-            else
-            {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
-        }
-        else
-        {
-            // : update and drawing
-            // : to do something
-
-            Update();
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
         }
     }
-
-    //Gdi_End();
 
     return (int) msg.wParam;
 }
@@ -109,10 +73,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINAPIBITMAP));
+    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINAPIGALSPANIC));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_WINAPIBITMAP);
+    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_WINAPIGALSPANIC);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -159,35 +123,14 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static HWND hEdit;
-    RECT rect;
-
     switch (message)
     {
-    case WM_CREATE:
-        GetClientRect(hWnd, &rect);
-        hEdit = CreateWindow(_T("edit"), NULL, WS_CHILD | WS_VISIBLE | WS_HSCROLL | WS_VSCROLL | ES_AUTOHSCROLL | ES_MULTILINE,
-            0, 100, rect.right, rect.bottom, hWnd, (HMENU)IDC_EDIT8_4, hInst, NULL);
-
-        //CreateBitMap();
-        //SetTimer(hWnd, TIMER_ANI, 33, AniProc);
-        break;
-    case WM_SIZE:
-        GetClientRect(hWnd, &rect);
-        MoveWindow(hEdit, 0, 0, rect.right, rect.bottom, TRUE);
-        break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
             // 메뉴 선택을 구문 분석합니다:
             switch (wmId)
             {
-            case ID_FILEOPEN:
-                FileRead(hEdit, _T("test2.txt"));
-                break;
-            case ID_FILESAVE:
-                FileSave(hEdit, _T("test2.txt"));
-                break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
@@ -204,15 +147,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-            //DrawBitMap(hWnd, hdc);
-            DrawBitMapDoubleBuffering(hWnd, hdc);
-            //TextOut(hdc, 10, 10, sKeyState, _tc)
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
-        DeleteBitmap();
-        KillTimer(hWnd, TIMER_ANI);
         PostQuitMessage(0);
         break;
     default:
@@ -240,56 +178,3 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
-
-
-//BOOL CALLBACK Dialog1_Proc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-//{
-//    static int Check[3];
-//
-//    switch (uMsg)
-//    {
-//    case WM_INITDIALOG:
-//    {
-//
-//    }
-//    break;
-//
-//    case WM_COMMAND:
-//        int wmId = LOWORD(wParam);
-//
-//        switch (wmId)
-//        {
-//        case IDC_READ:
-//            Check[0] = 1 - Check[0];
-//            break;
-//        case IDC_MUSIC:
-//            Check[1] = 1 - Check[1];
-//            break;
-//        case IDC_GAME:
-//            Check[2] = 1 - Check[2];
-//            break;
-//        case IDC_FEMALE:
-//            
-//            break;
-//        case IDC_MALE:
-//            break;
-//        case IDC_OUTPUT:
-//            /*_stprintf_s(output, _T("선택한 취미는 %s %s %S 입니다.\r\n")
-//                _T("선택한 성별은 %\s 입니다."),
-//                Check[0] ? hobby[0] : _T(""),
-//                Check[1] ? hobby[1] : _T(""),
-//                Check[2] ? hobby[2] : _T(""),
-//                sex[Radio]
-//            );*/
-//
-//            break;
-//        default:
-//            break;
-//        }
-//
-//        break;
-//
-//    default:
-//        break;
-//    }
-//}
