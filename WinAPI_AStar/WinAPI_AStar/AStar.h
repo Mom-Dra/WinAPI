@@ -6,7 +6,7 @@ class AStar
 	struct Node
 	{
 		int x, y;
-		double g, h;
+		int g, h;
 
 		double F() const noexcept
 		{
@@ -24,6 +24,8 @@ public:
 		: grid{ grid }, startX{ startX }, startY{ startY }, goalX{ goalX }, goalY{ goalY } {}
 
 	std::vector<std::pair<int, int>> FindPath();
+
+	int Heuristic(int x1, int y1, int x2, int y2);
 
 private:
 	std::vector<std::vector<int>> grid;
