@@ -4,15 +4,45 @@
 #include <queue>
 #include <array>
 
-std::vector<std::pair<int, int>> AStar::FindPath()
+struct Node
+{
+	int x, y;
+	int g, h;
+
+	explicit Node()
+	{
+
+	}
+
+	bool operator==(const Node& other) const noexcept
+	{
+		return x == other.x && y == other.y;
+	}
+};
+
+namespace std
+{
+	template<>
+	struct hash<Node>
+	{
+		std::size_t operator()(const Node& node) const
+		{
+			std::hash<int> hash_func;
+
+			return hash_func(node.x) ^ (hash_func(node.y) << 1);
+		}
+	};
+}
+
+std::vector<std::pair<int, int>> AStar::FindPath() const noexcept
 {
 	// F(x) = G(x) + H(x)
-
 	// 아직 평가를 해야할 노드
 	std::priority_queue<Node> openSet;
 
 	// 평가를 마친 노드
 	std::unordered_set<int> closedSet;
+
 	std::unordered_map<int, std::unordered_map<int, int>> gCost;
 	std::unordered_map<int, std::unordered_map<int, std::pair<int, int>>> cameFrom;
 
@@ -32,7 +62,7 @@ std::vector<std::pair<int, int>> AStar::FindPath()
 		if (current.x == goalX && current.y == goalY)
 		{
 			std::vector<std::pair<int, int>> path;
-			
+
 			int x{ current.x };
 			int y{ current.y };
 
@@ -55,10 +85,10 @@ std::vector<std::pair<int, int>> AStar::FindPath()
 		closedSet.emplace(current.x * grid[0].size() + current.y);
 
 		// 인접한 노드 검사
-		for (const auto& dir : directions)
+		for (const auto& [dx, dy] : directions)
 		{
-			int neighborX{ current.x + dir.first };
-			int neighborY{ current.x + dir.second };
+			int neighborX{ current.x + dx };
+			int neighborY{ current.y + dy };
 
 			// 맵 범위 체크 및 장애물 검사
 			if (neighborX >= 0 && neighborY >= 0 && neighborX < grid.size() && neighborY < grid[0].size() && grid[neighborX][neighborY] == 0)
@@ -87,8 +117,38 @@ std::vector<std::pair<int, int>> AStar::FindPath()
 	return std::vector<std::pair<int, int>>{};
 }
 
+std::vector<std::pair<int, int>> AStar::FindPath2() const noexcept
+{
+	std::priority_queue<Node> openSet;
+	std::array<std::pair<int, int>, 4> directions{ { {0, 1}, {1, 0}, {0, -1}, {-1, 0} } };
+
+	while (!openSet.empty())
+	{
+		Node current{ openSet.top() };
+		openSet.pop();
+
+		if (current.x == goalX && current.y == goalY)
+			break;
+
+		for (const auto& [dx, dy] : directions)
+		{
+			int nx{ current.x + dx };
+			int ny{ current.y + dy };
+
+			if (nx >= 0 && ny >= 0 && nx < grid.size() && ny < grid.size())
+			{
+				int nKey{ nx * grid[0].size() + ny };
+
+
+			}
+		}
+	}
+
+	return std::vector<std::pair<int, int>>();
+}
+
 // Manhatan Distance
-int AStar::Heuristic(int x1, int y1, int x2, int y2)
+int AStar::Heuristic(int x1, int y1, int x2, int y2) const noexcept
 {
 	return std::abs(x1 - x2) + std::abs(y1 - y2);
 }
