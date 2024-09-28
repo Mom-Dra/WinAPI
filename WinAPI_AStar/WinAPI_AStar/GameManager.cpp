@@ -1,17 +1,36 @@
 #include "GameManager.h"
 #include "AStar.h"
+#include <algorithm>
+#include "framework.h"
+#include "Rectangle.h"
 
-GameManager& GameManager::GetInstance()
+namespace MomDra
 {
-    static GameManager instance;
+    GameManager& GameManager::GetInstance()
+    {
+        static GameManager instance;
 
-    return instance;
-}
+        return instance;
+    }
 
-void GameManager::Draw(const AStar& aStar) const noexcept
-{
+    void GameManager::Draw(const HDC& hdc) const noexcept
+    {
+        for (const Rectangle& rec : rectangles)
+        {
+            rec.Draw(hdc);
+        }
+    }
 
+    GameManager::GameManager() noexcept
+    {
+        rectangles.reserve(NUM_OF_RECTANGLE);
 
+        for (int i = 0; i < NUM_OF_ROWS; ++i)
+        {
+            for (int j = 0; j < NUM_OF_COLS; ++j)
+            {
 
-
+            }
+        }
+    }
 }

@@ -5,28 +5,12 @@
 #include <array>
 #include <stack>
 
-struct Node
-{
-	int x, y;
-	int g, h;
-
-	explicit Node()
-	{
-
-	}
-
-	bool operator==(const Node& other) const noexcept
-	{
-		return x == other.x && y == other.y;
-	}
-};
-
 namespace std
 {
 	template<>
-	struct hash<Node>
+	struct hash<MomDra::AStar::Node>
 	{
-		std::size_t operator()(const Node& node) const noexcept
+		std::size_t operator()(const MomDra::AStar::Node& node) const noexcept
 		{
 			std::hash<int> hash_func;
 
@@ -129,105 +113,107 @@ namespace std
 //	return std::vector<std::pair<int, int>>{};
 //}
 
-std::vector<std::pair<int, int>> AStar::FindPath2() const noexcept
+namespace MomDra
 {
-	// F(x) = G(x) + H(x)
-	// 아직 평가를 해야할 노드
-	std::priority_queue<Node> openSet;
-
-	std::priority_queue<Node> openSet2;
-
-	// 평가를 마친 노드
-	std::unordered_set<std::pair<int, int>> closeSet;
-	std::unordered_map<std::pair<int, int>, int> gCost;
-	std::unordered_map<std::pair<int, int>, std::pair<int, int>> cameFrom;
-	std::array<std::pair<int, int>, 4> directions{ { {0, 1}, {1, 0}, {0, -1}, {-1, 0} } };
-
-	openSet.emplace(startX, startY, 0.0, Heuristic(startX, startY, goalX, goalY));
-	// 처음에는 시작 노드로 시작한다!
-
-	std::pair<int, int> tmp;
-
-	while (!openSet.empty())
+	std::vector<std::pair<int, int>> AStar::FindPath2() const noexcept
 	{
-		Node current{ openSet.top() };
-		openSet.pop();
+		// F(x) = G(x) + H(x)
+		// 아직 평가를 해야할 노드
+		std::priority_queue<Node> openSet;
 
-		closeSet.emplace(current.x, current.y);
+		// 평가를 마친 노드
+		std::unordered_set<std::pair<int, int>> closeSet;
+		std::unordered_map<std::pair<int, int>, int> gCost;
+		std::unordered_map<std::pair<int, int>, std::pair<int, int>> cameFrom;
+		std::array<std::pair<int, int>, 8> directions{ { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 }, { 1, 1 }, { 1 , -1 }, { -1, 1 }, { -1, -1 } } };
 
-		if (current.x == goalX && current.y == goalY)
+		openSet.emplace(startX, startY, 0.0, Heuristic(startX, startY, goalX, goalY));
+		// 처음에는 시작 노드로 시작한다!
+
+		std::pair<int, int> tmp;
+
+		while (!openSet.empty())
 		{
-			std::vector<std::pair<int, int>> path;
-			std::stack<std::pair<int, int>> st;
+			Node current{ openSet.top() };
+			openSet.pop();
 
-			tmp = { current.x, current.y };
+			closeSet.emplace(current.x, current.y);
 
-			while (cameFrom.find(tmp) != cameFrom.end())
+			if (current.x == goalX && current.y == goalY)
 			{
-				st.emplace(tmp);
-				tmp = cameFrom[tmp];
-			}
+				std::vector<std::pair<int, int>> path;
+				std::stack<std::pair<int, int>> st;
 
-			st.emplace(startX, startY);
+				tmp = { current.x, current.y };
 
-			path.reserve(st.size());
-
-			while (!st.empty())
-			{
-				path.emplace_back(st.top());
-				st.pop();
-			}
-
-			return path;
-		}
-
-		for (const auto& [dx, dy] : directions)
-		{
-			int nx{ current.x + dx };
-			int ny{ current.y + dy };
-
-			if (nx >= 0 && ny >= 0 && nx < grid.size() && ny < grid[0].size())
-			{
-				tmp = { nx, ny };
-
-				if (closeSet.find(tmp) == closeSet.end())
+				while (cameFrom.find(tmp) != cameFrom.end())
 				{
-					int newGCost{ current.g + 10 };
+					st.emplace(tmp);
+					tmp = cameFrom[tmp];
+				}
 
-					if (gCost.find(tmp) == gCost.end() || gCost[tmp] < newGCost)
+				st.emplace(startX, startY);
+
+				path.reserve(st.size());
+
+				while (!st.empty())
+				{
+					path.emplace_back(st.top());
+					st.pop();
+				}
+
+				return path;
+			}
+
+			for (const auto& [dx, dy] : directions)
+			{
+				int nx{ current.x + dx };
+				int ny{ current.y + dy };
+
+				if (nx >= 0 && ny >= 0 && nx < grid.size() && ny < grid[0].size())
+				{
+					tmp = { nx, ny };
+
+					if (closeSet.find(tmp) == closeSet.end())
 					{
-						gCost[tmp] = newGCost;
-						cameFrom[tmp] = std::make_pair(current.x, current.y);
+						int newGCost{ current.g + 10 };
 
-						int h{ Heuristic(nx, ny, goalX, goalY) };
-						openSet.emplace(nx, ny, newGCost, h);
+						if (gCost.find(tmp) == gCost.end() || gCost[tmp] < newGCost)
+						{
+							gCost[tmp] = newGCost;
+							cameFrom[tmp] = std::make_pair(current.x, current.y);
+
+							int h{ Heuristic(nx, ny, goalX, goalY) };
+							openSet.emplace(nx, ny, newGCost, h);
+						}
 					}
 				}
 			}
 		}
+
+		return std::vector<std::pair<int, int>>{};
 	}
 
-	return std::vector<std::pair<int, int>>{};
+	// Manhatan Distance
+	int AStar::Heuristic(int x1, int y1, int x2, int y2) const noexcept
+	{
+		int dx{ std::abs(x1 - x2) };
+		int dy{ std::abs(y1 - y2) };
+
+		int min{ std::min(dx, dy) };
+		int max{ std::max(dx, dy) };
+
+		return 14 * min + 10 * (max - min);
+	}
+
+	std::vector<std::pair<int, int>> AStar::RetracePath()
+	{
+		std::vector<std::pair<int, int>> track;
+
+
+
+		return track;
+	}
+
 }
 
-// Manhatan Distance
-int AStar::Heuristic(int x1, int y1, int x2, int y2) const noexcept
-{
-	int dx{ std::abs(x1 - x2) };
-	int dy{ std::abs(y1 - y2) };
-
-	int min{ std::min(dx, dy) };
-	int max{ std::max(dx, dy) };
-
-	return 14 * min + 10 * (max - min);
-}
-
-std::vector<std::pair<int, int>> AStar::RetracePath()
-{
-	std::vector<std::pair<int, int>> track;
-
-
-
-
-	return track;
-}

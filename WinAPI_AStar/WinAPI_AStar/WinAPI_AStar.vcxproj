@@ -131,6 +131,7 @@
     <ClInclude Include="AStar.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="WinAPI_AStar.h" />
@@ -138,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="AStar.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="WinAPI_AStar.cpp" />
   </ItemGroup>
   <ItemGroup>
