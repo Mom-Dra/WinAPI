@@ -5,16 +5,18 @@
 
 namespace MomDra
 {
-	class Rectangle
+	class Square
 	{
 	public:
-		explicit Rectangle(int width, int height) noexcept;
+		explicit Square(int x, int y, int width, int height) noexcept;
 		void Draw(const HDC& hdc) const noexcept;
 
 	private:
 		AStar::Node node;
 		int width;
 		int height;
+
+		static constexpr int stringPadding{ 5 };
 	};
 }
 

@@ -12,7 +12,12 @@ namespace MomDra
 			int x, y;
 			int g, h;
 
-			explicit Node() noexcept : Node(0, 0, 0, 0)
+			explicit Node() noexcept : Node{ 0, 0, 0, 0 }
+			{
+
+			}
+
+			explicit Node(int x, int y) noexcept : Node{ x, y, 0, 0 }
 			{
 
 			}

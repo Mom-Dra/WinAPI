@@ -3,6 +3,9 @@
 
 #include "framework.h"
 #include "WinAPI_AStar.h"
+#include "GameManager.h"
+
+using namespace MomDra;
 
 #define MAX_LOADSTRING 100
 
@@ -98,7 +101,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-       CW_USEDEFAULT, 0, MomDra::GameManager::WINDOW_WIDTH, MomDra::GameManager::WINDOW_HEIGHT, nullptr, nullptr, hInstance, nullptr);
+       CW_USEDEFAULT, 0, GameManager::WINDOW_WIDTH + GameManager::WINDOW_WIDTH_PADDING, GameManager::WINDOW_HEIGHT + GameManager::WINDOW_HEIGHT_PADDING, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -125,6 +128,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_CREATE:
+        SetTimer(hWnd, GameManager::WM_TIMER_1, GameManager::DELTATIME, nullptr);
+        break;
+
+    case WM_TIMER:
+        if (wParam == GameManager::WM_TIMER_1)
+        {
+            
+        }
+        break;
+
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -147,9 +161,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+            
+            GameManager::GetInstance().Draw(hdc);
             EndPaint(hWnd, &ps);
         }
         break;
+
+    case WM_MOUSEMOVE:
+
+        break;
+
+    case WM_LBUTTONDOWN:
+
+        break;
+
+    case WM_RBUTTONDOWN:
+
+        break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

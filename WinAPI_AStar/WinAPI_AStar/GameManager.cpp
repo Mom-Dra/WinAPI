@@ -15,7 +15,7 @@ namespace MomDra
 
     void GameManager::Draw(const HDC& hdc) const noexcept
     {
-        for (const Rectangle& rec : rectangles)
+        for (const Square& rec : rectangles)
         {
             rec.Draw(hdc);
         }
@@ -29,7 +29,7 @@ namespace MomDra
         {
             for (int j = 0; j < NUM_OF_COLS; ++j)
             {
-
+                rectangles.emplace_back(i, j, RECTANGLE_WIDTH, RECTANGLE_HEIGHT);
             }
         }
     }

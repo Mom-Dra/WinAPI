@@ -1,8 +1,8 @@
 #pragma once
 #include "AStar.h"
 #include <vector>
-#include "Rectangle.h"
 #include "framework.h"
+#include "Rectangle.h"
 
 namespace MomDra
 {
@@ -11,9 +11,15 @@ namespace MomDra
 	public:
 		static GameManager& GetInstance();
 
+		// FPS
+		static constexpr int FPS{ 60 };
+		static constexpr float DELTATIME{ 1.0f / FPS };
+
 		// 화면 크기
 		static constexpr int WINDOW_WIDTH{ 800 };
 		static constexpr int WINDOW_HEIGHT{ 800 };
+		static constexpr int WINDOW_WIDTH_PADDING{ 200 };
+		static constexpr int WINDOW_HEIGHT_PADDING{ 200 };
 
 		// Grid 행과 열의 개수
 		static constexpr int NUM_OF_ROWS{ 10 };
@@ -24,11 +30,14 @@ namespace MomDra
 		static constexpr int RECTANGLE_WIDTH{ WINDOW_WIDTH / NUM_OF_ROWS };
 		static constexpr int RECTANGLE_HEIGHT{ WINDOW_HEIGHT / NUM_OF_COLS };
 
+		// Timer
+		static constexpr int WM_TIMER_1{ 1 };
+
 		void Draw(const HDC& hdc) const noexcept;
 
 	private:
 		explicit GameManager() noexcept;
 
-		std::vector<MomDra::Rectangle> rectangles;
+		std::vector<MomDra::Square> rectangles;
 	};
 }
