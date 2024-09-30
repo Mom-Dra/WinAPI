@@ -27,7 +27,7 @@ namespace MomDra
 
 			}
 
-			double F() const noexcept
+			int F() const noexcept
 			{
 				return g + h;
 			}

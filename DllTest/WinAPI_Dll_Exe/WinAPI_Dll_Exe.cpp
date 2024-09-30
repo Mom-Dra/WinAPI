@@ -1,11 +1,8 @@
-﻿// WinAPI_AStar.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+﻿// WinAPI_Dll_Exe.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 
 #include "framework.h"
-#include "WinAPI_AStar.h"
-#include "GameManager.h"
-
-using namespace MomDra;
+#include "WinAPI_Dll_Exe.h"
 
 #define MAX_LOADSTRING 100
 
@@ -32,7 +29,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_WINAPIASTAR, szWindowClass, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_WINAPIDLLEXE, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
     // 애플리케이션 초기화를 수행합니다:
@@ -41,7 +38,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINAPIASTAR));
+    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WINAPIDLLEXE));
 
     MSG msg;
 
@@ -76,10 +73,10 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINAPIASTAR));
+    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_WINAPIDLLEXE));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_WINAPIASTAR);
+    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_WINAPIDLLEXE);
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -101,7 +98,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-       CW_USEDEFAULT, 0, GameManager::WINDOW_WIDTH + GameManager::WINDOW_WIDTH_PADDING, GameManager::WINDOW_HEIGHT + GameManager::WINDOW_HEIGHT_PADDING, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -128,17 +125,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-    case WM_CREATE:
-        SetTimer(hWnd, GameManager::WM_TIMER_1, GameManager::DELTATIME, nullptr);
-        break;
-
-    case WM_TIMER:
-        if (wParam == GameManager::WM_TIMER_1)
-        {
-            
-        }
-        break;
-
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -161,26 +147,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-            
-            GameManager::GetInstance().Draw(hdc);
+            {
+                HINSTANCE hInst;
+                void (*pFunc) (const HDC&, char*);
+                hInst = LoadLibrary(TEXT("dll/DllTest.dll"));
+                pFunc = (void(*)(const HDC&, char*))GetProcAddress(hInst, "dll_TextOut");
+                pFunc(hdc, (char*)_T("abcdefg"));
+                FreeLibrary(hInst);
+            }
+
             EndPaint(hWnd, &ps);
         }
         break;
-
-    case WM_MOUSEMOVE:
-
-        break;
-
-    case WM_LBUTTONDOWN:
-        GameManager::GetInstance().LBUTTONDOWN(LOWORD(lParam), HIWORD(lParam));
-        InvalidateRect(hWnd, NULL, TRUE);
-        break;
-
-    case WM_RBUTTONDOWN:
-        GameManager::GetInstance().RBUTTONDOWN(LOWORD(lParam), HIWORD(lParam));
-        InvalidateRect(hWnd, NULL, TRUE);
-        break;
-
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
